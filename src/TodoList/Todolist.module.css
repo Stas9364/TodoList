@@ -1,0 +1,15 @@
+.warning {
+    border: 1px solid red;
+}
+
+.message_warning {
+    color: red;
+}
+
+.activeButton {
+    background-color: greenyellow;
+}
+
+.isDone {
+    opacity: 0.5;
+}
