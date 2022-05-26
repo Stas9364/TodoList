@@ -1,7 +1,5 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
-import {SuperInput} from './Input';
-import style from './Todolist.module.css';
-
+import {Icon, TextField} from '@mui/material';
 type AddItemFormPropsType = {
     addTodoListsElements: (value: string)=>void
 }
@@ -38,16 +36,22 @@ const AddItemForm = (props: AddItemFormPropsType) => {
 
     return (
         <div>
-            <SuperInput
+
+            <TextField
                 onChange={onChangeInputHandler}
                 onKeyDown={onKeyPress}
-                className={error ? style.warning : ''}
+                error={!!error}
+                helperText={error}
                 value={value}
+                label={'Type value'}
+                variant={'standard'}
             />
 
-            <button onClick={onClickAddNewTaskHandler}>+</button>
+            <Icon
+                onClick={onClickAddNewTaskHandler}
+                color="primary">add_circle
+            </Icon>
 
-            {error && <div className={style.message_warning}>{error}</div>}
         </div>
     );
 };

@@ -13,3 +13,7 @@
 .isDone {
     opacity: 0.5;
 }
+
+.colorButton {
+    color: greenyellow;
+}
