@@ -65,7 +65,9 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
            return {
                ...state,
                [action.todoListId]:
-                   state[action.todoListId].map(task => task.id === action.idTask ? {...task, title: action.title} : task)
+                   state[action.todoListId]
+                       .map(task => task.id === action.idTask ? {...task, title: action.title} : task)
+                       .filter(task => task.title)
            };
        case 'REMOVE-TASK':
            return {
