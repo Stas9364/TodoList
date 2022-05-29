@@ -6,8 +6,8 @@ import {
     changeTaskTitleAC,
     removeTaskAC,
     tasksReducer
-} from '../tasksReducer';
-import {addTodoListAC, idTodoList1, idTodoList2, removeTodoListAC} from '../todoListsReducer';
+} from '../tasks/tasksReducer';
+import {addTodoListAC, idTodoList1, idTodoList2, removeTodoListAC} from '../todoLists/todoListsReducer';
 
 const id1 = v1();
 const id2 = v1();

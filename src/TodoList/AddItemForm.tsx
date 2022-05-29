@@ -12,25 +12,18 @@ const AddItemForm = (props: AddItemFormPropsType) => {
     const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => setValue(event.currentTarget.value);
 
     const onClickAddNewTaskHandler = () => {
-        props.addTodoListsElements(value);
-        setValue('');
-        titleError();
+        if (value.trim()) {
+            props.addTodoListsElements(value.trim());
+            setValue('');
+        } else {
+            setError('Title is required');
+        }
     };
 
     const onKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         setError(null);
         if (event.key === 'Enter') {
-            props.addTodoListsElements(value);
-            setValue('');
-            titleError();
-        }
-    };
-
-    const titleError = () => {
-        if (value === '') {
-            return setError('Title is required');
-        } else {
-            return setError(null);
+            onClickAddNewTaskHandler();
         }
     };
 
@@ -45,6 +38,7 @@ const AddItemForm = (props: AddItemFormPropsType) => {
                 value={value}
                 label={'Type value'}
                 variant={'standard'}
+                onBlur={()=>setError(null)}
             />
 
             <Icon

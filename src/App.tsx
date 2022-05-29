@@ -6,13 +6,13 @@ import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography}
 import {Menu} from '@mui/icons-material';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppStateType} from './State/todoListRedux';
+import {addNewTaskAC, changeCheckboxStatusAC, changeTaskTitleAC, removeTaskAC} from './State/tasks/tasksActions';
 import {
     addTodoListAC,
     changeTodoListFilterValueAC,
     changeTodoListTitleAC,
     removeTodoListAC
-} from './State/todoListsReducer';
-import {addNewTaskAC, changeCheckboxStatusAC, changeTaskTitleAC, removeTaskAC} from './State/tasksReducer';
+} from './State/todoLists/todoListsActions';
 
 export type TodoListsType = {
     id: string
@@ -68,7 +68,7 @@ function App() {
         <div className="App">
 
             <AppBar position="static" color={'primary'}>
-                <Toolbar>
+                <Toolbar style={{justifyContent: 'space-between'}}>
                     <IconButton
                         size="large"
                         edge="start"
@@ -78,20 +78,24 @@ function App() {
                     >
                         <Menu/>
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                        News
+                    <Typography variant="h6" component="div" >
+                        TODO LIST
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button
+                        color='inherit'
+                        variant={'outlined'}
+                    >Login</Button>
                 </Toolbar>
             </AppBar>
 
             <Container fixed>
-                <Grid container style={{margin: '5px 0 5px 0'}}>
+                <Grid container >
                     <AddItemForm addTodoListsElements={addNewTodoList}/>
                 </Grid>
 
                 <Grid container spacing={2}>
                     {todoLists.map(tl => {
+
                         let allTasks = tasksObj[tl.id];//default value
                         if (tl.filter === 'Completed') allTasks = allTasks.filter(el => el.isDone); //choose active tab
                         if (tl.filter === 'Active') allTasks = allTasks.filter(el => !el.isDone); //choose completed tab
@@ -106,14 +110,16 @@ function App() {
                                     id={tl.id}
                                     title={tl.title}
                                     tasks={allTasks}
+                                    filter={tl.filter}
+
                                     removeTask={removeTask}
                                     addNewTask={addNewTask}
                                     checkboxChange={checkboxChange}
                                     changeTasksTitle={changeTasksTitle}
+
                                     changeTodoListTitle={changeTodoListTitle}
                                     changeFilter={changeFilter}
                                     removeTodoList={removeTodoList}
-                                    filter={tl.filter}
                                     addTodoListsElement={addNewTodoList}
                                 />
                             </Paper>

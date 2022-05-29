@@ -1,36 +1,8 @@
-import {TasksStateType} from '../App';
+import {TasksStateType} from '../../App';
 import {v1} from 'uuid';
-import {AddTodoList, idTodoList1, idTodoList2, RemoveTodoList} from './todoListsReducer';
+import {idTodoList1, idTodoList2} from '../todoLists/todoListsReducer';
+import {ActionType} from './tasksActions';
 
-type AddNewTasksType = {
-    type: 'ADD-NEW-TASK'
-    todoListId: string
-    title: string
-}
-type ChangeCheckBoxStatusType = {
-    type: 'CHANGE-CHECKBOX-STATUS'
-    todoListId: string
-    idTask: string
-    isDone: boolean
-}
-type ChangeTaskTitleType = {
-    type: 'CHANGE-TASK-TITLE'
-    todoListId: string
-    idTask: string
-    title: string
-}
-type RemoveTaskType = {
-    type: 'REMOVE-TASK'
-    todoListId: string
-    idTask: string
-}
-type ActionType =
-    AddNewTasksType |
-    ChangeCheckBoxStatusType |
-    ChangeTaskTitleType |
-    RemoveTaskType |
-    AddTodoList |
-    RemoveTodoList;
 
 const initialState: TasksStateType = {
     [idTodoList1]: [
@@ -88,33 +60,3 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
    }
 };
 
-export const addNewTaskAC = (todoListId: string, title: string): AddNewTasksType => {
-    return {
-        type: 'ADD-NEW-TASK',
-        todoListId,
-        title
-    };
-};
-export const changeCheckboxStatusAC = (todoListId: string, idTask: string, isDone: boolean): ChangeCheckBoxStatusType => {
-    return {
-        type: 'CHANGE-CHECKBOX-STATUS',
-        todoListId,
-        idTask,
-        isDone
-    };
-};
-export const changeTaskTitleAC = (todoListId: string, idTask: string, title: string): ChangeTaskTitleType => {
-    return {
-        type: 'CHANGE-TASK-TITLE',
-        todoListId,
-        idTask,
-        title
-    };
-};
-export const removeTaskAC = (todoListId: string, idTask: string): RemoveTaskType => {
-    return {
-        type: 'REMOVE-TASK',
-        todoListId,
-        idTask
-    };
-};
