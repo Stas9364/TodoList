@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
-import {store} from './State/todoListRedux';
+import {store} from './State/storeTodoList';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <App/>
-    </Provider>
+     </Provider>
 );
 
 // If you want your app to work offline and load faster, you can change

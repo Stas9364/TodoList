@@ -1,5 +1,5 @@
 import {v1} from 'uuid';
-import {FilterValueType} from '../../TodoList/Todolist';
+import {FilterValueType} from '../TodoList/Todolist';
 
 export enum ACTIONS_TYPE {
     REMOVE_TODOLIST = 'REMOVE-TODOLIST',

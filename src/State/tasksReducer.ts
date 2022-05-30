@@ -1,10 +1,10 @@
-import {TasksStateType} from '../../App';
+import {TasksStateType} from '../App';
 import {v1} from 'uuid';
-import {idTodoList1, idTodoList2} from '../todoLists/todoListsReducer';
-import {ActionType} from './tasksActions';
+import {ActionType} from '../actions/tasksActions';
+import {idTodoList1, idTodoList2} from './todoListsReducer';
 
 
-const initialState: TasksStateType = {
+export const initialState: TasksStateType = {
     [idTodoList1]: [
         {id: v1(), title: 'HTML&CSS', isDone: false},
         {id: v1(), title: 'JS', isDone: false},

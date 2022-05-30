@@ -1,13 +1,8 @@
 import {v1} from 'uuid';
-import {TasksStateType} from '../../App';
-import {
-    addNewTaskAC,
-    changeCheckboxStatusAC,
-    changeTaskTitleAC,
-    removeTaskAC,
-    tasksReducer
-} from '../tasks/tasksReducer';
-import {addTodoListAC, idTodoList1, idTodoList2, removeTodoListAC} from '../todoLists/todoListsReducer';
+import {TasksStateType} from '../App';
+import {addNewTaskAC, changeCheckboxStatusAC, changeTaskTitleAC, removeTaskAC} from '../actions/tasksActions';
+import {tasksReducer} from '../State/tasksReducer';
+import {addTodoListAC, removeTodoListAC} from '../actions/todoListsActions';
 
 const id1 = v1();
 const id2 = v1();
@@ -16,6 +11,9 @@ const id4 = v1();
 const id5 = v1();
 const id1_1 = v1();
 const id1_2 = v1();
+
+const idTodoList1 = v1();
+const idTodoList2 = v1();
 
 const startState: TasksStateType = {
     [idTodoList1]: [
