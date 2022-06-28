@@ -1,48 +1,70 @@
-import {idTodoList1, idTodoList2, todoListsReducer} from '../State/todoListsReducer';
 import {
     addTodoListAC,
     changeTodoListFilterValueAC,
     changeTodoListTitleAC,
     removeTodoListAC
 } from '../actions/todoListsActions';
-import {initialState} from '../State/todoListsReducer';
+import {InitialStateType, todoListsReducer} from "../reducers/todoListsReducer";
+import {v1} from "uuid";
 
+export const idTodoList1 = v1();
+export const idTodoList2 = v1();
+export const idTodoList3 = v1();
+
+export const initialState: InitialStateType = {
+    todoLists: [
+        {
+            id: idTodoList1,
+            title: 'What to buy',
+            addedDate: 'string',
+            order: 0,
+            filter: 'All'
+        },
+        {
+            id: idTodoList2,
+            title: 'Another title',
+            addedDate: 'string',
+            order: 0,
+            filter: 'Completed'
+        }
+    ]
+}
 
 test('remove todoList', () => {
     const endState =
-        todoListsReducer(initialState, removeTodoListAC(idTodoList1));
+        todoListsReducer(initialState, removeTodoListAC(idTodoList2));
 
-    expect(endState.length).toBe(1);
-    expect(endState[0].title).toBe('What to buy');
+    expect(endState.todoLists.length).toBe(1);
+    expect(endState.todoLists[0].title).toBe('What to buy');
 });
 
 test('add todoList', () => {
-    const newTodoListTitle = 'New ToDoList';
+    const newTodoListTitle = 'New ToDoList1';
 
     const endState =
-        todoListsReducer(initialState, addTodoListAC(newTodoListTitle));
+        todoListsReducer(initialState, addTodoListAC(newTodoListTitle, idTodoList3, '', 0));
 
-    expect(endState.length).toBe(3);
-    expect(endState[0].title).toBe('New ToDoList');
-    expect(endState[0].filter).toBe('All');
+    expect(endState.todoLists.length).toBe(3);
+    expect(endState.todoLists[0].title).toBe('New ToDoList1');
+    expect(endState.todoLists[0].filter).toBe('All');
 });
 
 test('change todoList title', () => {
-    const newTodoListTitle = 'New ToDoList';
+    const newTodoListTitle = 'New ToDoList2';
 
     const endState =
-        todoListsReducer(initialState, changeTodoListTitleAC(idTodoList2, newTodoListTitle));
+        todoListsReducer(initialState, changeTodoListTitleAC(idTodoList1, newTodoListTitle));
 
-    expect(endState[1].title).toBe('New ToDoList');
-    expect(endState[0].title).toBe('What to do');
+    expect(endState.todoLists[1].title).toBe('Another title');
+    expect(endState.todoLists[0].title).toBe('New ToDoList2');
 });
 
 test('change filter value', () => {
-    const filterValue = 'Completed';
+    const filterValue = 'Active';
 
     const endState =
-        todoListsReducer(initialState, changeTodoListFilterValueAC(idTodoList2, filterValue));
+        todoListsReducer(initialState, changeTodoListFilterValueAC(idTodoList1, filterValue));
 
-    expect(endState[1].filter).toBe('Completed');
-    expect(endState[0].filter).toBe('Active');
+    expect(endState.todoLists[1].filter).toBe('Completed');
+    expect(endState.todoLists[0].filter).toBe('Active');
 });

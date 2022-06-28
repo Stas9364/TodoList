@@ -1,37 +1,35 @@
-import React, {useCallback} from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import {FilterValueType, TaskType, Todolist} from './TodoList/Todolist';
-import AddItemForm from './TodoList/AddItemForm';
+import {Todolist} from './TodoList/Todolist';
+import AddItemForm from './common/AddItemForm';
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@mui/material';
 import {Menu} from '@mui/icons-material';
-import {
-    addTodoListAC,
-} from './actions/todoListsActions';
-import {AppStateType} from './State/storeTodoList';
+import {AppStateType} from './storeRedux/storeTodoList';
 import {useDispatch, useSelector} from 'react-redux';
-
-export type TodoListsType = {
-    id: string
-    filter: FilterValueType
-    title: string
-}
-export type TasksStateType = {
-    [idTodoList: string]: TaskType[]
-}
+import {TodoListType} from "./TodoList/todoListsAPI";
+import {addTodoList, getTodoLists} from "./reducers/todoListsReducer";
+import {Dispatch} from "redux";
 
 
 function App() {
 
-    const dispatch = useDispatch();
-    const todoLists = useSelector<AppStateType>(state => state.todoLists) as Array<TodoListsType>;
+    const dispatch: Dispatch<any> = useDispatch();
 
-    const addNewTodoList = useCallback((newTodoListTitle: string) => {
-        dispatch(addTodoListAC(newTodoListTitle));
-    }, [dispatch]);
+    useEffect(() => {
+        dispatch(getTodoLists());
+    }, []);
+
+    const todoLists =
+        useSelector<AppStateType>(state => {
+            return state.todoListsInitState.todoLists
+        }) as Array<TodoListType>;
+
+    const addNewTodoList = (newTodoListTitle: string) => {
+        dispatch(addTodoList(newTodoListTitle));
+    };
 
     return (
         <div className="App">
-
             <AppBar position="static" color={'primary'}>
                 <Toolbar style={{justifyContent: 'space-between'}}>
                     <IconButton
@@ -59,7 +57,9 @@ function App() {
                 </Grid>
 
                 <Grid container spacing={2}>
+
                     {todoLists.map(tl => {
+
                         return <Grid item key={tl.id}>
 
                             <Paper

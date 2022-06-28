@@ -1,14 +1,17 @@
 import axios from "axios";
+import {FilterValueType} from "./Todolist";
 
 export type TodoListType = {
     id: string
     title: string
-    addDate: string
+    addedDate: string
     order: number
+    filter: FilterValueType
 }
-type ResponseType<D = {}> = {
+type ResponseType< D = {} > = {
     data: D
     messages: Array<string>
+    fieldsErrors: Array<string>
     resultCode: number
 }
 
@@ -34,3 +37,4 @@ export const todoListsAPI = {
         return instance.put<ResponseType>(`todo-lists/${todoListID}`, {title: value});
     }
 };
+
