@@ -6,9 +6,9 @@ import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography}
 import {Menu} from '@mui/icons-material';
 import {AppStateType} from './storeRedux/storeTodoList';
 import {useDispatch, useSelector} from 'react-redux';
-import {TodoListType} from "./TodoList/todoListsAPI";
-import {addTodoList, getTodoLists} from "./reducers/todoListsReducer";
-import {Dispatch} from "redux";
+import {addTodoList, getTodoLists, TodoListDomainType} from './reducers/todoListsReducer';
+import {Dispatch} from 'redux';
+import {Preloader} from "./common/Preloader/Preloader";
 
 
 function App() {
@@ -19,10 +19,12 @@ function App() {
         dispatch(getTodoLists());
     }, []);
 
+    const isLoading = useSelector<AppStateType>(state => state.todoListsInitState.isLoading);
+
     const todoLists =
         useSelector<AppStateType>(state => {
             return state.todoListsInitState.todoLists
-        }) as Array<TodoListType>;
+        }) as Array<TodoListDomainType>;
 
     const addNewTodoList = (newTodoListTitle: string) => {
         dispatch(addTodoList(newTodoListTitle));
@@ -56,27 +58,30 @@ function App() {
                     <AddItemForm addTodoListsElements={addNewTodoList}/>
                 </Grid>
 
-                <Grid container spacing={2}>
+                {isLoading
+                    ? <Preloader/>
+                    : <Grid container spacing={2}>
 
-                    {todoLists.map(tl => {
+                        {todoLists.map(tl => {
 
-                        return <Grid item key={tl.id}>
+                            return <Grid item key={tl.id}>
 
-                            <Paper
-                                elevation={4}
-                                style={{padding: '0 10px 10px 10px'}}
-                            >
-                                <Todolist
-                                    key={tl.id}
-                                    id={tl.id}
-                                    title={tl.title}
-                                    filter={tl.filter}
-                                />
-                            </Paper>
-                        </Grid>;
-                    })}
-                </Grid>
+                                <Paper
+                                    elevation={4}
+                                    style={{padding: '0 10px 10px 10px'}}
+                                >
+                                    <Todolist
+                                        key={tl.id}
+                                        id={tl.id}
+                                        title={tl.title}
+                                        filter={tl.filter}
+                                    />
 
+                                </Paper>
+                            </Grid>;
+                        })}
+                    </Grid>
+                }
             </Container>
         </div>
     );

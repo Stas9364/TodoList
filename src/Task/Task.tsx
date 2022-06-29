@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import {Checkbox, IconButton, ListItem} from '@mui/material';
 import {Delete} from '@mui/icons-material';
 import {EditableSpan} from '../common/EditableSpan';
-import {changeCheckbox, changeTaskTitle, removeTask} from '../reducers/tasksReducer';
+import {updateTaskState, removeTask} from '../reducers/tasksReducer';
 import {TasksStatuses} from './tasksAPI';
 import style from '../../src/TodoList/Todolist.module.css'
 import {Dispatch} from 'redux';
@@ -24,25 +24,25 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
     const dispatch: Dispatch<any> = useDispatch();
 
     const onInputCheckboxChange = useCallback(() => {
+
         let statusVal: number;
+
         if (status === TasksStatuses.New) {
             statusVal = TasksStatuses.Completed;
         }else {
             statusVal = TasksStatuses.New;
         }
-        dispatch(changeCheckbox(todoListId, taskId, taskTitle, statusVal));
+
+        dispatch(updateTaskState(todoListId, taskId, {status: statusVal}));
     }, [status, todoListId, taskId]);
 
     const onInputTitleChange = useCallback((title: string) => {
-
-        dispatch(changeTaskTitle(todoListId, taskId, title, status));
+        dispatch(updateTaskState(todoListId, taskId, {title}));
     }, [todoListId, taskId]);
 
     const onRemoveTask = useCallback(() => {
-
         dispatch(removeTask(todoListId, taskId));
     }, [todoListId, taskId]);
-
 
     return (
         <ListItem

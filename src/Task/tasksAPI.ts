@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export enum TasksStatuses {
     New = 0,
@@ -20,11 +20,19 @@ export type TaskType = {
     description: string
     id: string
     order: number
-    priority: number
+    priority: TaskPriorities
     startDate: string
     status: TasksStatuses
     title: string
     todoListId: string
+}
+export type UpdateTaskModelType = {
+    title: string
+    status: TasksStatuses
+    deadline: string
+    description: string
+    priority: TaskPriorities
+    startDate: string
 }
 type TasksType = {
     items: Array<TaskType>
@@ -58,13 +66,10 @@ export const tasksAPI = {
     deleteTask(todoListID: string, taskID: string) {
         return instance.delete<ResponseType>(`todo-lists/${todoListID}/tasks/${taskID}`);
     },
-    updateTask(todoListID: string, taskID: string, value: string, statusVal: number) {
+    updateTask(todoListID: string, taskID: string, model: UpdateTaskModelType) {
         return instance.put<ResponseType<{ item: TaskType }>>(
             `todo-lists/${todoListID}/tasks/${taskID}`,
-            {
-                title: value,
-                status: statusVal
-            }
+            {...model}
         );
     }
 };

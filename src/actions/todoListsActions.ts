@@ -6,21 +6,24 @@ export enum ACTIONS_TL_TYPE {
     ADD_TODOLIST = 'ADD-TODOLIST',
     CHANGE_TODOLIST_TITLE = 'CHANGE-TITLE',
     CHANGE_FILTER_VALUE = 'CHANGE-FILTER-VALUE',
-    GET_TODO_LISTS = 'GET-TODO-LISTS'
+    GET_TODO_LISTS = 'GET-TODO-LISTS',
+    IS_LOADING = 'IS-LOADING'
 }
 
-export type ActionsType = RemoveTodoList | AddTodoList | ChangeTodoListTitle | ChangeFilterValue | GetTodoLists;
+export type ActionsType =
+    RemoveTodoList
+    | AddTodoList
+    | ChangeTodoListTitle
+    | ChangeFilterValue
+    | GetTodoLists
+    | IsLoading;
 export type RemoveTodoList = {
     type: ACTIONS_TL_TYPE.REMOVE_TODOLIST
     id: string
 }
 export type AddTodoList = {
     type: ACTIONS_TL_TYPE.ADD_TODOLIST
-    newTodoListTitle: string
-    todoListId: string
-    addedDate: string
-    order: number
-
+    todoList: TodoListType
 }
 type ChangeTodoListTitle = {
     id: string
@@ -36,6 +39,10 @@ type GetTodoLists = {
     type: ACTIONS_TL_TYPE.GET_TODO_LISTS
     todoLists: Array<TodoListType>
 }
+type IsLoading = {
+    type: ACTIONS_TL_TYPE.IS_LOADING
+    isLoading: boolean
+}
 
 export const removeTodoListAC = (todoListId: string): RemoveTodoList => {
     return {
@@ -43,13 +50,10 @@ export const removeTodoListAC = (todoListId: string): RemoveTodoList => {
         id: todoListId
     };
 };
-export const addTodoListAC = (newTodoListTitle: string, todoListID: string, addedDate: string, order: number): AddTodoList => {
+export const addTodoListAC = (todoList: TodoListType): AddTodoList => {
     return {
         type: ACTIONS_TL_TYPE.ADD_TODOLIST,
-        newTodoListTitle,
-        todoListId: todoListID,
-        addedDate,
-        order
+        todoList
     };
 };
 export const changeTodoListTitleAC = (todoListId: string, title: string): ChangeTodoListTitle => {
@@ -70,5 +74,11 @@ export const getTodoListsAC = (todoLists: Array<TodoListType>): GetTodoLists => 
     return {
         type: ACTIONS_TL_TYPE.GET_TODO_LISTS,
         todoLists
+    };
+};
+export const isLoadingAC = (value: boolean): IsLoading => {
+    return {
+        type: ACTIONS_TL_TYPE.IS_LOADING,
+        isLoading: value
     };
 };

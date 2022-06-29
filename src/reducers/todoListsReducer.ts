@@ -3,17 +3,24 @@ import {
     ActionsType,
     addTodoListAC,
     changeTodoListTitleAC,
-    getTodoListsAC, removeTodoListAC
+    getTodoListsAC, isLoadingAC,
+    removeTodoListAC
 } from '../actions/todoListsActions';
 import {Dispatch} from "redux";
 import {todoListsAPI, TodoListType} from "../TodoList/todoListsAPI";
+import {FilterValueType} from "../TodoList/Todolist";
 
 export type InitialStateType = {
-    todoLists: Array<TodoListType>
+    todoLists: Array<TodoListDomainType>
+    isLoading: boolean
+}
+export type TodoListDomainType = TodoListType & {
+    filter: FilterValueType
 }
 
 export const initialState: InitialStateType = {
     todoLists: [],
+    isLoading: true
 }
 
 export const todoListsReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
@@ -24,13 +31,8 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
                 todoLists: state.todoLists.filter(el => el.id !== action.id)
             }
         case ACTIONS_TL_TYPE.ADD_TODOLIST:
-            const newTodoList: TodoListType = {
-                id: action.todoListId,
-                title: action.newTodoListTitle,
-                addedDate: action.addedDate,
-                order: action.order,
-                filter: 'All'
-            };
+            const newTodoList: TodoListDomainType = {...action.todoList, filter: 'All'};
+
             return {
                 ...state,
                 todoLists: [newTodoList, ...state.todoLists]
@@ -50,6 +52,12 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
                 ...state,
                 todoLists: [...action.todoLists]
             };
+        case ACTIONS_TL_TYPE.IS_LOADING: {
+            return {
+                ...state,
+                isLoading: action.isLoading
+            }
+        }
         default:
             return state;
     }
@@ -59,13 +67,14 @@ export const getTodoLists = () => (dispatch: Dispatch) => {
     todoListsAPI.getTodoLists()
         .then(resp => {
             dispatch(getTodoListsAC(resp.data));
+            dispatch(isLoadingAC(false));
         });
 };
 
 export const addTodoList = (newTodoListTitle: string) => (dispatch: Dispatch) => {
     todoListsAPI.createTodoList(newTodoListTitle)
         .then(resp => {
-            dispatch(addTodoListAC(newTodoListTitle, resp.data.data.item.id, resp.data.data.item.addedDate, resp.data.data.item.order));
+            dispatch(addTodoListAC(resp.data.data.item));
         });
 };
 

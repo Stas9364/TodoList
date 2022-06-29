@@ -1,5 +1,5 @@
 import {v1} from 'uuid';
-import {addNewTaskAC, changeCheckboxStatusAC, changeTaskTitleAC, removeTaskAC} from '../actions/tasksActions';
+import {addNewTaskAC, updateTaskStateAC, removeTaskAC} from '../actions/tasksActions';
 import {InitialTasksStateType, tasksReducer} from "../reducers/tasksReducer";
 import {idTodoList1} from "./todoListsReduser.test";
 
@@ -56,14 +56,26 @@ test('add new task', ()=>{
 });
 
 test('change checkbox status', ()=>{
-    const endState = tasksReducer(startState, changeCheckboxStatusAC(idTodoList1, id1, 0));
+    const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id1, {
+        description: '',
+        priority: 1,
+        startDate: '',
+        status: 0,
+        title: 'I am the best',
+    }));
 
     expect(endState.tasks.length).toBe(2);
     expect(endState.tasks[0].status).toBe(0);
 });
 
 test('change task title', ()=>{
-   const endState = tasksReducer(startState, changeTaskTitleAC(idTodoList1, id1,'i am a new title'));
+   const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id1,{
+       description: '',
+       priority: 1,
+       startDate: '',
+       status: 0,
+       title: 'i am a new title',
+   }));
 
     expect(endState.tasks[0].title).toBe('i am a new title');
 });

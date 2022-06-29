@@ -1,17 +1,17 @@
 import {
     addTodoListAC,
     changeTodoListFilterValueAC,
-    changeTodoListTitleAC,
+    changeTodoListTitleAC, isLoadingAC,
     removeTodoListAC
 } from '../actions/todoListsActions';
-import {InitialStateType, todoListsReducer} from "../reducers/todoListsReducer";
+import {TodoListDomainType, todoListsReducer} from "../reducers/todoListsReducer";
 import {v1} from "uuid";
 
 export const idTodoList1 = v1();
 export const idTodoList2 = v1();
 export const idTodoList3 = v1();
 
-export const initialState: InitialStateType = {
+export const initialState = {
     todoLists: [
         {
             id: idTodoList1,
@@ -27,7 +27,8 @@ export const initialState: InitialStateType = {
             order: 0,
             filter: 'Completed'
         }
-    ]
+    ] as Array<TodoListDomainType>,
+    isLoading: false
 }
 
 test('remove todoList', () => {
@@ -39,14 +40,17 @@ test('remove todoList', () => {
 });
 
 test('add todoList', () => {
-    const newTodoListTitle = 'New ToDoList1';
-
     const endState =
-        todoListsReducer(initialState, addTodoListAC(newTodoListTitle, idTodoList3, '', 0));
+        todoListsReducer(initialState, addTodoListAC({
+            id: idTodoList3,
+            title: 'Changed title',
+            addedDate: 'string',
+            order: 0,
+            filter: 'All'
+        }));
 
     expect(endState.todoLists.length).toBe(3);
-    expect(endState.todoLists[0].title).toBe('New ToDoList1');
-    expect(endState.todoLists[0].filter).toBe('All');
+    expect(endState.todoLists[0].title).toBe('Changed title');
 });
 
 test('change todoList title', () => {
@@ -68,3 +72,10 @@ test('change filter value', () => {
     expect(endState.todoLists[1].filter).toBe('Completed');
     expect(endState.todoLists[0].filter).toBe('Active');
 });
+
+test('is loading changed', ()=>{
+    const endState =
+        todoListsReducer(initialState, isLoadingAC(true));
+
+    expect(endState.isLoading).toBeTruthy();
+})
