@@ -1,14 +1,13 @@
 import {
     ACTIONS_TL_TYPE,
-    ActionsType,
     addTodoListAC,
     changeTodoListTitleAC,
     getTodoListsAC, isLoadingAC,
-    removeTodoListAC
+    removeTodoListAC, TodoListActionsType
 } from '../actions/todoListsActions';
-import {Dispatch} from "redux";
-import {todoListsAPI, TodoListType} from "../TodoList/todoListsAPI";
+import {todoListsAPI, TodoListType} from "../api/todoListsAPI";
 import {FilterValueType} from "../TodoList/Todolist";
+import {AppThunk} from "../storeRedux/storeTodoList";
 
 export type InitialStateType = {
     todoLists: Array<TodoListDomainType>
@@ -23,19 +22,17 @@ export const initialState: InitialStateType = {
     isLoading: true
 }
 
-export const todoListsReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
+export const todoListsReducer = (state: InitialStateType = initialState, action: TodoListActionsType): InitialStateType => {
     switch (action.type) {
         case ACTIONS_TL_TYPE.REMOVE_TODOLIST:
             return {
                 ...state,
                 todoLists: state.todoLists.filter(el => el.id !== action.id)
-            }
+            };
         case ACTIONS_TL_TYPE.ADD_TODOLIST:
-            const newTodoList: TodoListDomainType = {...action.todoList, filter: 'All'};
-
             return {
                 ...state,
-                todoLists: [newTodoList, ...state.todoLists]
+                todoLists: [{...action.todoList, filter: 'All'}, ...state.todoLists]
             };
         case ACTIONS_TL_TYPE.CHANGE_TODOLIST_TITLE:
             return {
@@ -52,18 +49,19 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
                 ...state,
                 todoLists: [...action.todoLists]
             };
-        case ACTIONS_TL_TYPE.IS_LOADING: {
+        case ACTIONS_TL_TYPE.IS_LOADING:
             return {
                 ...state,
                 isLoading: action.isLoading
-            }
-        }
+            };
         default:
             return state;
     }
 };
 
-export const getTodoLists = () => (dispatch: Dispatch) => {
+/////////Thunk
+
+export const getTodoLists = (): AppThunk => (dispatch) => {
     todoListsAPI.getTodoLists()
         .then(resp => {
             dispatch(getTodoListsAC(resp.data));
@@ -71,14 +69,14 @@ export const getTodoLists = () => (dispatch: Dispatch) => {
         });
 };
 
-export const addTodoList = (newTodoListTitle: string) => (dispatch: Dispatch) => {
+export const addTodoList = (newTodoListTitle: string): AppThunk => (dispatch) => {
     todoListsAPI.createTodoList(newTodoListTitle)
         .then(resp => {
             dispatch(addTodoListAC(resp.data.data.item));
         });
 };
 
-export const changeTitle = (id: string, title: string) => (dispatch: Dispatch) => {
+export const changeTitle = (id: string, title: string): AppThunk => (dispatch) => {
     todoListsAPI.updateTodoList(id, title)
         .then(resp => {
             if (resp.data.resultCode === 0) {
@@ -87,7 +85,7 @@ export const changeTitle = (id: string, title: string) => (dispatch: Dispatch) =
         });
 };
 
-export const removeTodo = (id: string) => (dispatch: Dispatch) => {
+export const removeTodo = (id: string): AppThunk => (dispatch) => {
     todoListsAPI.deleteTodoList(id)
         .then(resp => {
             if (resp.data.resultCode === 0) {

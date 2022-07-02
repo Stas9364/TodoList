@@ -1,5 +1,5 @@
 import axios from "axios";
-import {FilterValueType} from "./Todolist";
+import {FilterValueType} from "../TodoList/Todolist";
 
 export type TodoListType = {
     id: string
@@ -37,4 +37,3 @@ export const todoListsAPI = {
         return instance.put<ResponseType>(`todo-lists/${todoListID}`, {title: value});
     }
 };
-

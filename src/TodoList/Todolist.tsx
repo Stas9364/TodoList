@@ -3,16 +3,18 @@ import AddItemForm from '../common/AddItemForm';
 import {EditableSpan} from '../common/EditableSpan';
 import {Button, IconButton, List} from '@mui/material';
 import {Delete} from '@mui/icons-material';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppStateType} from '../storeRedux/storeTodoList';
 import {Task} from '../Task/Task';
 import {changeTodoListFilterValueAC} from '../actions/todoListsActions';
-import {TasksStatuses, TaskType} from '../Task/tasksAPI';
+import {TasksStatuses} from '../api/tasksAPI';
 import {changeTitle, removeTodo} from '../reducers/todoListsReducer';
 import {createTask, getTasks} from '../reducers/tasksReducer';
-import {Dispatch} from 'redux';
+import {useAppDispatch, useAppSelector} from "../App/app/hooks";
 
-export type FilterValueType = 'Active' | 'Completed' | 'All';
+export type FilterValueType =
+    | 'Active'
+    | 'Completed'
+    | 'All';
+
 type PropsType = {
     id: string
     title: string
@@ -24,15 +26,11 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                                                              title,
                                                              filter
 }) => {
-    const dispatch: Dispatch<any> = useDispatch();
+    const dispatch = useAppDispatch();
 
-    useEffect(()=>{
-        dispatch(getTasks(id));
-    }, [id]);
-
-    const tasks = useSelector<AppStateType>(state => {
+    const tasks = useAppSelector(state => {
         return state.tasksInitState.tasks.filter(t => t.todoListId === id)
-    }) as  Array<TaskType>;
+    });
 
     const addNewTask = useCallback((value: string) => {
         dispatch(createTask(id, value));
@@ -57,6 +55,10 @@ export const Todolist: React.FC<PropsType> = React.memo(({
     if (filter === 'Active') {
         allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
     }
+
+    useEffect(()=>{
+        dispatch(getTasks(id));
+    }, [id]);
 
     return (
         <>

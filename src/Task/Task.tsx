@@ -1,12 +1,11 @@
 import React, {useCallback} from 'react';
-import {useDispatch} from "react-redux";
 import {Checkbox, IconButton, ListItem} from '@mui/material';
 import {Delete} from '@mui/icons-material';
 import {EditableSpan} from '../common/EditableSpan';
 import {updateTaskState, removeTask} from '../reducers/tasksReducer';
-import {TasksStatuses} from './tasksAPI';
+import {TasksStatuses} from '../api/tasksAPI';
 import style from '../../src/TodoList/Todolist.module.css'
-import {Dispatch} from 'redux';
+import {useAppDispatch} from "../App/app/hooks";
 
 type TaskPropsType = {
     todoListId: string
@@ -21,7 +20,7 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
                                                              status,
                                                              taskTitle
 }) => {
-    const dispatch: Dispatch<any> = useDispatch();
+    const dispatch = useAppDispatch();
 
     const onInputCheckboxChange = useCallback(() => {
 
