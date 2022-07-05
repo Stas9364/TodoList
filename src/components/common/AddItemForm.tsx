@@ -1,18 +1,21 @@
 import React, {ChangeEvent, KeyboardEvent, useCallback, useState} from 'react';
-import {Icon, TextField} from '@mui/material';
+import {IconButton, TextField} from '@mui/material';
+import {AddBox} from "@mui/icons-material";
+
 type AddItemFormPropsType = {
-    addTodoListsElements: (value: string)=>void
+    addTodoListsElements: (value: string) => void
+    disabled?: boolean | undefined
 }
 
-const AddItemForm = React.memo ( (props: AddItemFormPropsType) => {
+const AddItemForm: React.FC<AddItemFormPropsType> = React.memo(({addTodoListsElements, disabled = false}) => {
     const [value, setValue] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
     const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => setValue(event.currentTarget.value);
 
-    const onClickAddNewTaskHandler = useCallback (() => {
+    const onClickAddNewTaskHandler = useCallback(() => {
         if (value.trim()) {
-            props.addTodoListsElements(value.trim());
+            addTodoListsElements(value.trim());
             setValue('');
         } else {
             setError('Title is required');
@@ -32,6 +35,7 @@ const AddItemForm = React.memo ( (props: AddItemFormPropsType) => {
         <div>
 
             <TextField
+                disabled={disabled}
                 onChange={onChangeInputHandler}
                 onKeyDown={onKeyPress}
                 error={!!error}
@@ -39,16 +43,19 @@ const AddItemForm = React.memo ( (props: AddItemFormPropsType) => {
                 value={value}
                 label={'Type value'}
                 variant={'standard'}
-                onBlur={()=>setError(null)}
+                onBlur={() => setError(null)}
             />
 
-            <Icon
+            <IconButton
+                disabled={disabled}
                 onClick={onClickAddNewTaskHandler}
-                color="primary">add_circle
-            </Icon>
+                color="primary"
+            >
+                <AddBox/>
+            </IconButton>
 
         </div>
     );
-} );
+});
 
 export default AddItemForm;

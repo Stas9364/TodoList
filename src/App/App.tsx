@@ -1,11 +1,15 @@
 import React from 'react';
 import './App.css';
-import {AppBar, Button, Container, IconButton, Toolbar, Typography} from '@mui/material';
+import {AppBar, Button, Container, IconButton, LinearProgress, Toolbar, Typography} from '@mui/material';
 import {Menu} from '@mui/icons-material';
-import {TodoListsList} from '../TodoListsList/TodoListsList';
+import {TodoListsList} from '../components/TodoListsList/TodoListsList';
+import {CustomizedSnackbars} from '../components/common/Snackbar';
+import {useAppSelector} from './app/hooks';
 
 
 function App() {
+    const addStatus = useAppSelector(state => state.app.secondaryLoading);
+
     return (
         <div className="App">
 
@@ -29,6 +33,12 @@ function App() {
                     >Login</Button>
                 </Toolbar>
             </AppBar>
+
+            <div style={{height: '10px'}}>
+                {addStatus === 'loading' && <LinearProgress color={"success"}/>}
+            </div>
+
+            <CustomizedSnackbars/>
 
             <Container fixed>
                 <TodoListsList/>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {RequestStatusType} from "../bll/reducers/appReducer";
 
 export enum TasksStatuses {
     New = 0,
@@ -25,6 +26,7 @@ export type TaskType = {
     status: TasksStatuses
     title: string
     todoListId: string
+    entityStatus: RequestStatusType
 }
 export type UpdateTaskModelType = {
     title: string
@@ -42,7 +44,7 @@ type TasksType = {
 type ResponseType<D = {}> = {
     data: D
     resultCode: number
-    massages: Array<string>
+    messages: Array<string>
     fieldsErrors: Array<string>
 }
 

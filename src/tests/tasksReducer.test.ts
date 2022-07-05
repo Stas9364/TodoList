@@ -1,7 +1,8 @@
 import {v1} from 'uuid';
-import {addNewTaskAC, updateTaskStateAC, removeTaskAC} from '../actions/tasksActions';
-import {InitialTasksStateType, tasksReducer} from "../reducers/tasksReducer";
+import {addNewTaskAC, updateTaskStateAC, removeTaskAC} from '../bll/actions/tasksActions';
+import {InitialTasksStateType, tasksReducer} from "../bll/reducers/tasksReducer";
 import {idTodoList1} from "./todoListsReduser.test";
+import {TaskType} from "../api/tasksAPI";
 
 const id1 = v1();
 const id2 = v1();
@@ -19,7 +20,8 @@ const startState: InitialTasksStateType = {
             startDate: '',
             status: 1,
             title: 'some task title',
-            todoListId: idTodoList1
+            todoListId: idTodoList1,
+            entityStatus: 'idle'
         },
         {
             addedDate: '',
@@ -31,13 +33,14 @@ const startState: InitialTasksStateType = {
             startDate: '',
             status: 0,
             title: 'HOHOHO',
-            todoListId: idTodoList1
+            todoListId: idTodoList1,
+            entityStatus: 'succeeded'
         }
     ]
 };
 
 test('add new task', ()=>{
-    const task = {
+    const task: TaskType = {
         addedDate: '',
         deadline: '',
         description: '',
@@ -47,12 +50,15 @@ test('add new task', ()=>{
         startDate: '',
         status: 0,
         title: 'I am the best',
-        todoListId: idTodoList1
+        todoListId: idTodoList1,
+        entityStatus: 'idle'
     };
     const endState = tasksReducer(startState, addNewTaskAC(task));
 
     expect(endState.tasks.length).toBe(3);
     expect(endState.tasks[0].title).toBe('I am the best');
+    expect(endState.tasks[0].entityStatus).toBe('idle');
+    expect(endState.tasks[2].entityStatus).toBe('succeeded');
 });
 
 test('change checkbox status', ()=>{
@@ -78,6 +84,18 @@ test('change task title', ()=>{
    }));
 
     expect(endState.tasks[0].title).toBe('i am a new title');
+});
+
+test('change task entity status', ()=>{
+   const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id2,{
+       description: '',
+       priority: 1,
+       startDate: '',
+       status: 0,
+       entityStatus: 'loading'
+   }));
+
+    expect(endState.tasks[1].entityStatus).toBe('loading');
 });
 
 test('remove task', ()=>{

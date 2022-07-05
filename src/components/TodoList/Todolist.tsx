@@ -3,12 +3,13 @@ import AddItemForm from '../common/AddItemForm';
 import {EditableSpan} from '../common/EditableSpan';
 import {Button, IconButton, List} from '@mui/material';
 import {Delete} from '@mui/icons-material';
+import {changeTodoListFilterValueAC} from '../../bll/actions/todoListsActions';
+import {TasksStatuses} from '../../api/tasksAPI';
+import {changeTitle, removeTodo} from '../../bll/reducers/todoListsReducer';
+import {createTask, getTasks} from '../../bll/reducers/tasksReducer';
+import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
 import {Task} from '../Task/Task';
-import {changeTodoListFilterValueAC} from '../actions/todoListsActions';
-import {TasksStatuses} from '../api/tasksAPI';
-import {changeTitle, removeTodo} from '../reducers/todoListsReducer';
-import {createTask, getTasks} from '../reducers/tasksReducer';
-import {useAppDispatch, useAppSelector} from "../App/app/hooks";
+import {RequestStatusType} from "../../bll/reducers/appReducer";
 
 export type FilterValueType =
     | 'Active'
@@ -19,17 +20,23 @@ type PropsType = {
     id: string
     title: string
     filter: FilterValueType
+    entityStatus: RequestStatusType
 }
 
 export const Todolist: React.FC<PropsType> = React.memo(({
                                                              id,
                                                              title,
-                                                             filter
-}) => {
+                                                             filter,
+                                                             entityStatus
+                                                         }) => {
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        dispatch(getTasks(id));
+    }, [id]);
+
     const tasks = useAppSelector(state => {
-        return state.tasksInitState.tasks.filter(t => t.todoListId === id)
+        return state.tasksInitState.tasks.filter(t => t.todoListId === id);
     });
 
     const addNewTask = useCallback((value: string) => {
@@ -56,10 +63,6 @@ export const Todolist: React.FC<PropsType> = React.memo(({
         allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
     }
 
-    useEffect(()=>{
-        dispatch(getTasks(id));
-    }, [id]);
-
     return (
         <>
             <h3>
@@ -70,6 +73,7 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                 />
 
                 <IconButton
+                    disabled={entityStatus === 'loading'}
                     color={'inherit'}
                     onClick={removeTodoList}
                 >
@@ -77,7 +81,10 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                 </IconButton>
             </h3>
 
-            <AddItemForm addTodoListsElements={addNewTask}/>
+            <AddItemForm
+                addTodoListsElements={addNewTask}
+                disabled={entityStatus === 'loading'}
+            />
 
             <List>
                 {allTasks.map(elem => {
@@ -89,9 +96,10 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                             status={elem.status}
                             taskTitle={elem.title}
                             key={elem.id}
+                            entityStatus={elem.entityStatus}
                         />
 
-                    )
+                    );
                 })}
             </List>
             <div>
@@ -119,7 +127,7 @@ export const Todolist: React.FC<PropsType> = React.memo(({
 
             </div>
         </>
-    )
+    );
 });
 
 

@@ -2,23 +2,26 @@ import React, {useCallback} from 'react';
 import {Checkbox, IconButton, ListItem} from '@mui/material';
 import {Delete} from '@mui/icons-material';
 import {EditableSpan} from '../common/EditableSpan';
-import {updateTaskState, removeTask} from '../reducers/tasksReducer';
-import {TasksStatuses} from '../api/tasksAPI';
-import style from '../../src/TodoList/Todolist.module.css'
-import {useAppDispatch} from "../App/app/hooks";
+import {updateTaskState, removeTask} from '../../bll/reducers/tasksReducer';
+import {TasksStatuses} from '../../api/tasksAPI';
+import style from '../TodoList/Todolist.module.css'
+import {useAppDispatch} from "../../App/app/hooks";
+import {RequestStatusType} from "../../bll/reducers/appReducer";
 
 type TaskPropsType = {
     todoListId: string
     taskId: string
     status: number
     taskTitle: string
+    entityStatus: RequestStatusType
 }
 
 export const Task: React.FC<TaskPropsType> = React.memo(({
                                                              todoListId,
                                                              taskId,
                                                              status,
-                                                             taskTitle
+                                                             taskTitle,
+                                                             entityStatus
 }) => {
     const dispatch = useAppDispatch();
 
@@ -44,6 +47,7 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
     }, [todoListId, taskId]);
 
     return (
+
         <ListItem
             divider
             disablePadding
@@ -52,6 +56,7 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
         >
 
             <IconButton
+                disabled={entityStatus === 'loading'}
                 color={'default'}
                 onClick={onRemoveTask}>
                 <Delete/>
@@ -64,10 +69,12 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
             />
 
             <EditableSpan
+                disabled={entityStatus === 'loading'}
                 title={taskTitle}
                 changeTitleHandler={(title) => onInputTitleChange(title)}
                 key={taskId}
             />
+
         </ListItem>
-    )
+    );
 });

@@ -4,11 +4,16 @@ import {
     updateTaskStateAC,
     getTasksAC, removeTaskAC, TaskActionType
 } from '../actions/tasksActions';
-import {TaskPriorities, tasksAPI, TasksStatuses, TaskType, UpdateTaskModelType} from "../api/tasksAPI";
-import {AppStateType, AppThunk} from "../storeRedux/storeTodoList";
+import {TaskPriorities, tasksAPI, TasksStatuses, TaskType, UpdateTaskModelType} from '../../api/tasksAPI';
+import {AppStateType, AppThunk} from '../storeTodoList';
+import {changeErrorAC, secondaryLoadingAC} from '../actions/appActions';
+import {RequestStatusType} from "./appReducer";
 
 export type InitialTasksStateType = {
-    tasks: Array<TaskType>
+    tasks: Array<TaskDomainType>
+}
+export type TaskDomainType = TaskType & {
+    entityStatus: RequestStatusType
 }
 export type UpdateDomainTaskModelType = {
     title?: string
@@ -17,11 +22,12 @@ export type UpdateDomainTaskModelType = {
     description?: string
     priority?: TaskPriorities
     startDate?: string
+    entityStatus?: RequestStatusType
 }
 
 export const initialState: InitialTasksStateType = {
     tasks: []
-}
+};
 
 export const tasksReducer = (state: InitialTasksStateType = initialState, action: TaskActionType): InitialTasksStateType => {
     switch (action.type) {
@@ -33,7 +39,7 @@ export const tasksReducer = (state: InitialTasksStateType = initialState, action
         case ACTIONS_TASKS_TYPE.ADD_NEW_TASK:
             return {
                 ...state,
-                tasks: [action.task, ...state.tasks]
+                tasks: [{...action.task, entityStatus: "idle"}, ...state.tasks]
             };
         case ACTIONS_TASKS_TYPE.UPDATE_TASK:
             return {
@@ -58,17 +64,32 @@ export const tasksReducer = (state: InitialTasksStateType = initialState, action
 export const getTasks = (id: string): AppThunk => (dispatch) => {
     tasksAPI.getTasks(id)
         .then(resp => {
-            dispatch(getTasksAC(resp.data.items))
+            dispatch(getTasksAC(resp.data.items));
+            dispatch(secondaryLoadingAC('succeeded'));
         });
 };
 
 export const createTask = (id: string, value: string): AppThunk => (dispatch) => {
+    dispatch(secondaryLoadingAC('loading'));
     tasksAPI.createTask(id, value)
-        .then(resp => dispatch(addNewTaskAC(resp.data.data.item)));
+        .then(resp => {
+            if (resp.data.resultCode === 0) {
+                dispatch(addNewTaskAC(resp.data.data.item));
+                dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                if (resp.data.messages.length) {
+                    dispatch(changeErrorAC(resp.data.messages[0]));
+                } else {
+                    dispatch(changeErrorAC('Some error has occurred'));
+                }
+            }
+        });
 };
 
 export const updateTaskState = (todoListId: string, taskId: string, domainModel: UpdateDomainTaskModelType): AppThunk => {
     return (dispatch, getState: () => AppStateType) => {
+        dispatch(secondaryLoadingAC('loading'));
+
         const state = getState();
         const task = state.tasksInitState.tasks.find(t => t.id === taskId);
 
@@ -84,6 +105,7 @@ export const updateTaskState = (todoListId: string, taskId: string, domainModel:
             description: task.description,
             priority: task.priority,
             startDate: task.startDate,
+            entityStatus: 'idle',
             ...domainModel
         };
 
@@ -91,16 +113,20 @@ export const updateTaskState = (todoListId: string, taskId: string, domainModel:
             .then(resp => {
                 if (resp.data.resultCode === 0) {
                     dispatch(updateTaskStateAC(todoListId, taskId, domainModel));
+                    dispatch(secondaryLoadingAC('succeeded'));
                 }
             });
     };
 };
 
 export const removeTask = (todoListId: string, taskId: string): AppThunk => (dispatch) => {
+    dispatch(secondaryLoadingAC('loading'));
+    dispatch(updateTaskStateAC(todoListId, taskId, {entityStatus: 'loading'}))
     tasksAPI.deleteTask(todoListId, taskId)
         .then(resp => {
             if (resp.data.resultCode === 0) {
-                dispatch(removeTaskAC(todoListId, taskId))
+                dispatch(removeTaskAC(todoListId, taskId));
+                dispatch(secondaryLoadingAC('succeeded'));
             }
         });
 };

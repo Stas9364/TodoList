@@ -1,4 +1,4 @@
-import {TaskType} from "../api/tasksAPI";
+import {TaskType} from '../../api/tasksAPI';
 import {UpdateDomainTaskModelType} from "../reducers/tasksReducer";
 
 export enum ACTIONS_TASKS_TYPE {

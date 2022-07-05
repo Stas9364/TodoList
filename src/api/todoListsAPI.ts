@@ -1,5 +1,6 @@
-import axios from "axios";
-import {FilterValueType} from "../TodoList/Todolist";
+import axios from 'axios';
+import {FilterValueType} from '../components/TodoList/Todolist';
+import {RequestStatusType} from "../bll/reducers/appReducer";
 
 export type TodoListType = {
     id: string
@@ -7,6 +8,7 @@ export type TodoListType = {
     addedDate: string
     order: number
     filter: FilterValueType
+    entityStatus: RequestStatusType
 }
 type ResponseType< D = {} > = {
     data: D
