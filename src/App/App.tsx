@@ -35,7 +35,7 @@ function App() {
             </AppBar>
 
             <div style={{height: '10px'}}>
-                {addStatus === 'loading' && <LinearProgress color={"success"}/>}
+                {addStatus === 'loading' && <LinearProgress color={"secondary"}/>}
             </div>
 
             <CustomizedSnackbars/>

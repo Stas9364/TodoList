@@ -8,6 +8,7 @@ import {TaskPriorities, tasksAPI, TasksStatuses, TaskType, UpdateTaskModelType} 
 import {AppStateType, AppThunk} from '../storeTodoList';
 import {changeErrorAC, secondaryLoadingAC} from '../actions/appActions';
 import {RequestStatusType} from "./appReducer";
+import {handleNetworkError, handleServerError} from "../../utils/handleError";
 
 export type InitialTasksStateType = {
     tasks: Array<TaskDomainType>
@@ -64,9 +65,22 @@ export const tasksReducer = (state: InitialTasksStateType = initialState, action
 export const getTasks = (id: string): AppThunk => (dispatch) => {
     tasksAPI.getTasks(id)
         .then(resp => {
-            dispatch(getTasksAC(resp.data.items));
-            dispatch(secondaryLoadingAC('succeeded'));
+            if (!resp.data.error) {
+                dispatch(getTasksAC(resp.data.items));
+                dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                if (resp.data.error) {
+                    dispatch(changeErrorAC(resp.data.error));
+                    dispatch(secondaryLoadingAC('failed'));
+                } else {
+                    dispatch(changeErrorAC('Some error has occurred'));
+                }
+            }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
+
 };
 
 export const createTask = (id: string, value: string): AppThunk => (dispatch) => {
@@ -77,13 +91,13 @@ export const createTask = (id: string, value: string): AppThunk => (dispatch) =>
                 dispatch(addNewTaskAC(resp.data.data.item));
                 dispatch(secondaryLoadingAC('succeeded'));
             } else {
-                if (resp.data.messages.length) {
-                    dispatch(changeErrorAC(resp.data.messages[0]));
-                } else {
-                    dispatch(changeErrorAC('Some error has occurred'));
-                }
+                handleServerError(resp.data, dispatch);
             }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
+
 };
 
 export const updateTaskState = (todoListId: string, taskId: string, domainModel: UpdateDomainTaskModelType): AppThunk => {
@@ -114,7 +128,12 @@ export const updateTaskState = (todoListId: string, taskId: string, domainModel:
                 if (resp.data.resultCode === 0) {
                     dispatch(updateTaskStateAC(todoListId, taskId, domainModel));
                     dispatch(secondaryLoadingAC('succeeded'));
+                } else {
+                    handleServerError(resp.data, dispatch);
                 }
+            })
+            .catch(e => {
+                handleNetworkError(e, dispatch)
             });
     };
 };
@@ -127,6 +146,13 @@ export const removeTask = (todoListId: string, taskId: string): AppThunk => (dis
             if (resp.data.resultCode === 0) {
                 dispatch(removeTaskAC(todoListId, taskId));
                 dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                handleServerError(resp.data, dispatch);
             }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
 };
+
+

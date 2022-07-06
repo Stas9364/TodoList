@@ -3,7 +3,7 @@ import AddItemForm from '../common/AddItemForm';
 import {EditableSpan} from '../common/EditableSpan';
 import {Button, IconButton, List} from '@mui/material';
 import {Delete} from '@mui/icons-material';
-import {changeTodoListFilterValueAC} from '../../bll/actions/todoListsActions';
+import {updateTodoListStateAC} from '../../bll/actions/todoListsActions';
 import {TasksStatuses} from '../../api/tasksAPI';
 import {changeTitle, removeTodo} from '../../bll/reducers/todoListsReducer';
 import {createTask, getTasks} from '../../bll/reducers/tasksReducer';
@@ -48,7 +48,7 @@ export const Todolist: React.FC<PropsType> = React.memo(({
     }, [id]);
 
     const changeFilter = useCallback((filter: FilterValueType) => {
-        dispatch(changeTodoListFilterValueAC(id, filter));
+        dispatch(updateTodoListStateAC(id, {filter}));
     }, [id]);
 
     const removeTodoList = useCallback(() => {

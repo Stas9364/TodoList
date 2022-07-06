@@ -1,15 +1,12 @@
- import {
-    ACTIONS_TL_TYPE,
-    addTodoListAC, changeEntityStatusAC,
-    changeTodoListTitleAC,
-    getTodoListsAC,
-    removeTodoListAC, TodoListActionsType
+import {
+    ACTIONS_TL_TYPE, addTodoListAC, getTodoListsAC, removeTodoListAC, TodoListActionsType, updateTodoListStateAC
 } from '../actions/todoListsActions';
 import {todoListsAPI, TodoListType} from "../../api/todoListsAPI";
 import {FilterValueType} from "../../components/TodoList/Todolist";
 import {AppThunk} from "../storeTodoList";
- import {secondaryLoadingAC, mainLoadingAC} from "../actions/appActions";
- import {RequestStatusType} from "./appReducer";
+import {secondaryLoadingAC, mainLoadingAC} from "../actions/appActions";
+import {RequestStatusType} from "./appReducer";
+import {handleNetworkError, handleServerError} from "../../utils/handleError";
 
 export type InitialStateType = {
     todoLists: Array<TodoListDomainType>
@@ -35,20 +32,10 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
                 ...state,
                 todoLists: [{...action.todoList, filter: 'All', entityStatus: 'idle'}, ...state.todoLists]
             };
-        case ACTIONS_TL_TYPE.CHANGE_TODOLIST_TITLE:
+        case ACTIONS_TL_TYPE.UPDATE_TODO_LIST_STATE:
             return {
                 ...state,
-                todoLists: state.todoLists.map(el => el.id === action.id ? {...el, title: action.title} : el)
-            };
-        case ACTIONS_TL_TYPE.CHANGE_FILTER_VALUE:
-            return {
-                ...state,
-                todoLists: state.todoLists.map(el => el.id === action.id ? {...el, filter: action.filter} : el)
-            };
-        case ACTIONS_TL_TYPE.CHANGE_ENTITY_STATUS:
-            return {
-                ...state,
-                todoLists: state.todoLists.map(el => el.id === action.id ? {...el, entityStatus: action.status} : el)
+                todoLists: state.todoLists.map(el => el.id === action.id ? {...el, ...action.model} : el)
             };
         case ACTIONS_TL_TYPE.GET_TODO_LISTS:
             return {
@@ -69,6 +56,9 @@ export const getTodoLists = (): AppThunk => (dispatch) => {
             dispatch(getTodoListsAC(resp.data));
             dispatch(mainLoadingAC('succeeded'));
             dispatch(secondaryLoadingAC('loading'));
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
 };
 
@@ -76,8 +66,15 @@ export const addTodoList = (newTodoListTitle: string): AppThunk => (dispatch) =>
     dispatch(secondaryLoadingAC('loading'));
     todoListsAPI.createTodoList(newTodoListTitle)
         .then(resp => {
-            dispatch(addTodoListAC(resp.data.data.item));
-            dispatch(secondaryLoadingAC('succeeded'));
+            if (resp.data.resultCode === 0) {
+                dispatch(addTodoListAC(resp.data.data.item));
+                dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                handleServerError(resp.data, dispatch);
+            }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
 };
 
@@ -86,20 +83,30 @@ export const changeTitle = (id: string, title: string): AppThunk => (dispatch) =
     todoListsAPI.updateTodoList(id, title)
         .then(resp => {
             if (resp.data.resultCode === 0) {
-                dispatch(changeTodoListTitleAC(id, title));
+                dispatch(updateTodoListStateAC(id, {title}));
                 dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                handleServerError(resp.data, dispatch);
             }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
 };
 
 export const removeTodo = (id: string): AppThunk => (dispatch) => {
     dispatch(secondaryLoadingAC('loading'));
-    dispatch(changeEntityStatusAC(id, 'loading'));
+    dispatch(updateTodoListStateAC(id, {entityStatus: 'loading'}));
     todoListsAPI.deleteTodoList(id)
         .then(resp => {
             if (resp.data.resultCode === 0) {
                 dispatch(removeTodoListAC(id));
                 dispatch(secondaryLoadingAC('succeeded'));
+            } else {
+                handleServerError(resp.data, dispatch);
             }
+        })
+        .catch(e => {
+            handleNetworkError(e, dispatch);
         });
 };

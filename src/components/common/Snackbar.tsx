@@ -15,7 +15,6 @@ export const CustomizedSnackbars = () => {
     const dispatch = useAppDispatch();
     const error = useAppSelector(state => state.app.error);
 
-
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickAway') {
             return;

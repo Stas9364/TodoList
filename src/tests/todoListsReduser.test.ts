@@ -1,8 +1,6 @@
 import {
-    addTodoListAC, changeEntityStatusAC,
-    changeTodoListFilterValueAC,
-    changeTodoListTitleAC,
-    removeTodoListAC
+    addTodoListAC,
+    removeTodoListAC, updateTodoListStateAC
 } from '../bll/actions/todoListsActions';
 import {TodoListDomainType, todoListsReducer} from "../bll/reducers/todoListsReducer";
 import {v1} from "uuid";
@@ -58,30 +56,24 @@ test('add todoList', () => {
 });
 
 test('change todoList title', () => {
-    const newTodoListTitle = 'New ToDoList2';
-
     const endState =
-        todoListsReducer(initialState, changeTodoListTitleAC(idTodoList1, newTodoListTitle));
+        todoListsReducer(initialState, updateTodoListStateAC(idTodoList2, {title: 'TEST TEST'}));
 
-    expect(endState.todoLists[1].title).toBe('Another title');
-    expect(endState.todoLists[0].title).toBe('New ToDoList2');
+    expect(endState.todoLists[1].title).toBe('TEST TEST');
+    expect(endState.todoLists[0].title).toBe('What to buy');
 });
 
-test('change filter value', () => {
-    const filterValue = 'Active';
-
+test('update todolist value', () => {
     const endState =
-        todoListsReducer(initialState, changeTodoListFilterValueAC(idTodoList1, filterValue));
+        todoListsReducer(initialState, updateTodoListStateAC(idTodoList1, {filter: 'Active'}));
 
     expect(endState.todoLists[1].filter).toBe('Completed');
     expect(endState.todoLists[0].filter).toBe('Active');
 });
 
-test('change entity status', () => {
-    const entityStatus = 'succeeded';
-
+test('update todolist entityStatus', () => {
     const endState =
-        todoListsReducer(initialState, changeEntityStatusAC(idTodoList1, entityStatus));
+        todoListsReducer(initialState, updateTodoListStateAC(idTodoList1, {entityStatus: 'succeeded'}));
 
     expect(endState.todoLists[0].entityStatus).toBe('succeeded');
     expect(endState.todoLists[1].entityStatus).toBe('idle');
