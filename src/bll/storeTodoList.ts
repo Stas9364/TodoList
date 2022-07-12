@@ -7,16 +7,23 @@ import {TodoListActionsType} from './actions/todoListsActions';
 import {TaskActionType} from './actions/tasksActions';
 import {appReducer} from "./reducers/appReducer";
 import {AppActionsTypes} from "./actions/appActions";
+import {authReducer} from "./reducers/authReducer";
+import {AuthActionsType} from "./actions/authActions";
 
 export type AppStateType = ReturnType<typeof rootReducer>
 export type AppDispatch = ThunkDispatch<AppStateType, unknown, AppActionsType>;
-export type AppActionsType = TodoListActionsType | TaskActionType | AppActionsTypes;
+export type AppActionsType =
+    | TodoListActionsType
+    | TaskActionType
+    | AppActionsTypes
+    | AuthActionsType;
 export type AppThunk <ReturnType = void> = ThunkAction<ReturnType, AppStateType, unknown, AppActionsType>
 
 const rootReducer = combineReducers({
     todoListsInitState: todoListsReducer,
     tasksInitState: tasksReducer,
-    app: appReducer
+    app: appReducer,
+    auth: authReducer
 });
 
 export const store = legacy_createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));

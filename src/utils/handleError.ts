@@ -5,7 +5,6 @@ import {changeErrorAC, secondaryLoadingAC} from "../bll/actions/appActions";
 export const handleServerError = <D>(data: ResponseType<D>, dispatch: AppDispatch) => {
     if (data.messages.length) {
         dispatch(changeErrorAC(data.messages[0]));
-
     } else {
         dispatch(changeErrorAC('Some error has occurred'));
     }

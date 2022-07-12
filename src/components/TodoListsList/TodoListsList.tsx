@@ -2,26 +2,33 @@ import {addTodoList, getTodoLists} from '../../bll/reducers/todoListsReducer';
 import React, {useCallback, useEffect} from 'react';
 import {Grid, Paper} from '@mui/material';
 import AddItemForm from '../common/AddItemForm';
-import {Preloader} from '../common/Preloader/Preloader';
 import {Todolist} from '../TodoList/Todolist';
 import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
+import {Navigate} from 'react-router-dom';
 
 export const TodoListsList = React.memo (() => {
 
     const dispatch = useAppDispatch();
+    const isAuth = useAppSelector(state => state.auth.isAuth);
 
-    const todoListsStatus = useAppSelector(state => state.app.mainLoading);
+    useEffect(() => {
+        if (!isAuth) {
+            return;
+        }
+        dispatch(getTodoLists());
+    }, []);
 
-    const todoLists =
-        useAppSelector(state => state.todoListsInitState.todoLists);
+
+    const todoLists = useAppSelector(state => state.todoListsInitState.todoLists);
 
     const addNewTodoList = useCallback ((newTodoListTitle: string) => {
         dispatch(addTodoList(newTodoListTitle));
     }, []);
 
-    useEffect(() => {
-        dispatch(getTodoLists());
-    }, []);
+
+    if (!isAuth) {
+        return <Navigate to={'/login'}/>
+    }
 
     return (
         <>
@@ -29,7 +36,6 @@ export const TodoListsList = React.memo (() => {
                 <AddItemForm addTodoListsElements={addNewTodoList}/>
             </Grid>
 
-            {todoListsStatus === 'loading' && <Preloader/>}
                  <Grid container spacing={2}>
 
                     {todoLists.map(tl => {

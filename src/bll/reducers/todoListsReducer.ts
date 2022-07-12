@@ -1,12 +1,12 @@
 import {
     ACTIONS_TL_TYPE, addTodoListAC, getTodoListsAC, removeTodoListAC, TodoListActionsType, updateTodoListStateAC
 } from '../actions/todoListsActions';
-import {todoListsAPI, TodoListType} from "../../api/todoListsAPI";
-import {FilterValueType} from "../../components/TodoList/Todolist";
-import {AppThunk} from "../storeTodoList";
-import {secondaryLoadingAC, mainLoadingAC} from "../actions/appActions";
-import {RequestStatusType} from "./appReducer";
-import {handleNetworkError, handleServerError} from "../../utils/handleError";
+import {todoListsAPI, TodoListType} from '../../api/todoListsAPI';
+import {FilterValueType} from '../../components/TodoList/Todolist';
+import {AppThunk} from '../storeTodoList';
+import {secondaryLoadingAC} from '../actions/appActions';
+import {RequestStatusType} from './appReducer';
+import {handleNetworkError, handleServerError} from '../../utils/handleError';
 
 export type InitialStateType = {
     todoLists: Array<TodoListDomainType>
@@ -50,11 +50,9 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
 /////////Thunk
 
 export const getTodoLists = (): AppThunk => (dispatch) => {
-    dispatch(mainLoadingAC('loading'));
     todoListsAPI.getTodoLists()
         .then(resp => {
             dispatch(getTodoListsAC(resp.data));
-            dispatch(mainLoadingAC('succeeded'));
             dispatch(secondaryLoadingAC('loading'));
         })
         .catch(e => {
