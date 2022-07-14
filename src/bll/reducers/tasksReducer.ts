@@ -63,6 +63,7 @@ export const tasksReducer = (state: InitialTasksStateType = initialState, action
 /////////Thunk
 
 export const getTasks = (id: string): AppThunk => (dispatch) => {
+    dispatch(secondaryLoadingAC('loading'));
     tasksAPI.getTasks(id)
         .then(resp => {
             if (!resp.data.error) {

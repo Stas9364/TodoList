@@ -10,7 +10,6 @@ export const LoginForm = React.memo(() => {
     const dispatch = useAppDispatch();
     const isAuth = useAppSelector(state => state.auth.isAuth);
 
-
     const formik = useFormik({
         validate: (values) => {
             if (!values.email) {
@@ -38,7 +37,7 @@ export const LoginForm = React.memo(() => {
     });
 
     if (isAuth) {
-        return <Navigate to={'/'}/>
+        return <Navigate to={'/'} />
     }
 
     return (

@@ -2,7 +2,7 @@ import React from 'react';
 import preloader from '../../../assets/img/preloader.gif'
 import styles from './Preloader.module.css'
 
-export const Preloader = () => {
+export const Preloader = React.memo( () => {
     return (
         <div className={styles.container}>
             <img
@@ -12,5 +12,5 @@ export const Preloader = () => {
             />
         </div>
     );
-};
+} );
 

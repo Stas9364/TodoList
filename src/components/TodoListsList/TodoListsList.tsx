@@ -18,16 +18,14 @@ export const TodoListsList = React.memo (() => {
         dispatch(getTodoLists());
     }, []);
 
-
     const todoLists = useAppSelector(state => state.todoListsInitState.todoLists);
 
     const addNewTodoList = useCallback ((newTodoListTitle: string) => {
         dispatch(addTodoList(newTodoListTitle));
     }, []);
 
-
     if (!isAuth) {
-        return <Navigate to={'/login'}/>
+        return <Navigate to={'/login'} />
     }
 
     return (

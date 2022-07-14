@@ -50,10 +50,12 @@ export const todoListsReducer = (state: InitialStateType = initialState, action:
 /////////Thunk
 
 export const getTodoLists = (): AppThunk => (dispatch) => {
+    dispatch(secondaryLoadingAC('loading'));
+
     todoListsAPI.getTodoLists()
         .then(resp => {
             dispatch(getTodoListsAC(resp.data));
-            dispatch(secondaryLoadingAC('loading'));
+            dispatch(secondaryLoadingAC('succeeded'));
         })
         .catch(e => {
             handleNetworkError(e, dispatch);
@@ -70,6 +72,7 @@ export const addTodoList = (newTodoListTitle: string): AppThunk => (dispatch) =>
             } else {
                 handleServerError(resp.data, dispatch);
             }
+
         })
         .catch(e => {
             handleNetworkError(e, dispatch);

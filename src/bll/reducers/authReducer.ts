@@ -37,7 +37,6 @@ export const getAuthData = (): AppThunk => (dispatch) => {
             if (data.resultCode === 0) {
                 dispatch(authorization(data.data.id, data.data.email, data.data.login, true));
             } else if (data.resultCode === 1) {
-                console.log(data.messages[0])
                 handleServerError(data, dispatch);
             }
             dispatch(mainLoadingAC('succeeded'));
@@ -51,15 +50,12 @@ export const login = (email: string, password: string, rememberMe: boolean): App
     dispatch(secondaryLoadingAC('loading'));
     authAPI.login(email, password, rememberMe)
         .then(resp => {
-
             if (resp.data.resultCode === 0) {
                 dispatch(getAuthData());
                 dispatch(secondaryLoadingAC('succeeded'));
-
             } else if (resp.data.resultCode === 1) {
                 handleServerError(resp.data, dispatch);
                 dispatch(secondaryLoadingAC('succeeded'));
-
             }else if (resp.data.resultCode === 10) {
                 console.warn(resp.data.messages[0]);
                 dispatch(secondaryLoadingAC('succeeded'));

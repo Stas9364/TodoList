@@ -31,13 +31,13 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                                                          }) => {
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(getTasks(id));
-    }, [id]);
-
-    const tasks = useAppSelector(state => {
-        return state.tasksInitState.tasks.filter(t => t.todoListId === id);
-    });
+    // useEffect(() => {
+    //     dispatch(getTasks(id));
+    // }, [id]);
+    //
+    // const tasks = useAppSelector(state => {
+    //     return state.tasksInitState.tasks.filter(t => t.todoListId === id);
+    // });
 
     const addNewTask = useCallback((value: string) => {
         dispatch(createTask(id, value));
@@ -55,13 +55,13 @@ export const Todolist: React.FC<PropsType> = React.memo(({
         dispatch(removeTodo(id));
     }, [id]);
 
-    let allTasks = tasks;
-    if (filter === 'Completed') {
-        allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);
-    }
-    if (filter === 'Active') {
-        allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
-    }
+    // let allTasks = tasks;
+    // if (filter === 'Completed') {
+    //     allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);
+    // }
+    // if (filter === 'Active') {
+    //     allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
+    // }
 
     return (
         <>
@@ -87,20 +87,24 @@ export const Todolist: React.FC<PropsType> = React.memo(({
             />
 
             <List>
-                {allTasks.map(elem => {
-                    return (
+                <TasksList
+                    todoListId={id}
+                    filter={filter}
+                />
+                {/*{allTasks.map(elem => {*/}
+                {/*    return (*/}
 
-                        <Task
-                            todoListId={id}
-                            taskId={elem.id}
-                            status={elem.status}
-                            taskTitle={elem.title}
-                            key={elem.id}
-                            entityStatus={elem.entityStatus}
-                        />
+                {/*        <Task*/}
+                {/*            todoListId={id}*/}
+                {/*            taskId={elem.id}*/}
+                {/*            status={elem.status}*/}
+                {/*            taskTitle={elem.title}*/}
+                {/*            key={elem.id}*/}
+                {/*            entityStatus={elem.entityStatus}*/}
+                {/*        />*/}
 
-                    );
-                })}
+                {/*    );*/}
+                {/*})}*/}
             </List>
             <div>
 
@@ -129,5 +133,52 @@ export const Todolist: React.FC<PropsType> = React.memo(({
         </>
     );
 });
+
+
+type TasksListPropsType = {
+    todoListId: string
+    filter: FilterValueType
+}
+
+export const TasksList: React.FC<TasksListPropsType> = React.memo (({todoListId, filter}) => {
+    const dispatch = useAppDispatch();
+
+    let allTasks = useAppSelector(state => {
+        return state.tasksInitState.tasks.filter(t => t.todoListId === todoListId);
+    });
+
+    useEffect(() => {
+    if (allTasks.length !== 0) {
+        return ;
+    }
+        dispatch(getTasks(todoListId));
+    }, [todoListId]);
+
+    if (filter === 'Completed') {
+        allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);
+    }
+    if (filter === 'Active') {
+        allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
+    }
+
+    return (
+        <>
+            {allTasks.map(elem => {
+                return (
+
+                    <Task
+                        todoListId={todoListId}
+                        taskId={elem.id}
+                        status={elem.status}
+                        taskTitle={elem.title}
+                        key={elem.id}
+                        entityStatus={elem.entityStatus}
+                    />
+
+                );
+            })}
+        </>
+    );
+} );
 
 
