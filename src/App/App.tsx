@@ -7,7 +7,7 @@ import {CustomizedSnackbars} from '../components/common/Snackbar';
 import {useAppDispatch, useAppSelector} from './app/hooks';
 import {LoginForm} from '../components/common/LoginForm';
 import {getAuthData, logout} from '../bll/reducers/authReducer';
-import {Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes} from 'react-router-dom';
 import {Preloader} from "../components/common/Preloader/Preloader";
 
 
@@ -73,6 +73,11 @@ function App() {
                 <Routes>
                     <Route path={'/'} element={<TodoListsList/>}/>
                     <Route path={'/login'} element={<LoginForm/>}/>
+
+                    {/*Create PAGE 404*/}
+
+                    <Route path={'/404'} element={<h1>404. Page not found</h1>}/>
+                    <Route path={'*'} element={<Navigate to={'/404'} />} />
                 </Routes>
 
             </Container>
