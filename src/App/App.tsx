@@ -2,7 +2,7 @@ import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {AppBar, Button, Container, IconButton, LinearProgress, Toolbar, Typography} from '@mui/material';
 import {Menu} from '@mui/icons-material';
-import {TodoListsList} from '../components/TodoListsList/TodoListsList';
+import {TodoListsList} from '../components/TodoList/TodoListsList';
 import {CustomizedSnackbars} from '../components/common/Snackbar';
 import {useAppDispatch, useAppSelector} from './app/hooks';
 import {LoginForm} from '../components/common/LoginForm';

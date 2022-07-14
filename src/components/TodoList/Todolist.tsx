@@ -1,15 +1,14 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import AddItemForm from '../common/AddItemForm';
 import {EditableSpan} from '../common/EditableSpan';
 import {Button, IconButton, List} from '@mui/material';
 import {Delete} from '@mui/icons-material';
 import {updateTodoListStateAC} from '../../bll/actions/todoListsActions';
-import {TasksStatuses} from '../../api/tasksAPI';
 import {changeTitle, removeTodo} from '../../bll/reducers/todoListsReducer';
-import {createTask, getTasks} from '../../bll/reducers/tasksReducer';
-import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
-import {Task} from '../Task/Task';
+import {createTask} from '../../bll/reducers/tasksReducer';
+import {useAppDispatch} from '../../App/app/hooks';
 import {RequestStatusType} from "../../bll/reducers/appReducer";
+import {TasksList} from "../Task/TasksList";
 
 export type FilterValueType =
     | 'Active'
@@ -31,14 +30,6 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                                                          }) => {
     const dispatch = useAppDispatch();
 
-    // useEffect(() => {
-    //     dispatch(getTasks(id));
-    // }, [id]);
-    //
-    // const tasks = useAppSelector(state => {
-    //     return state.tasksInitState.tasks.filter(t => t.todoListId === id);
-    // });
-
     const addNewTask = useCallback((value: string) => {
         dispatch(createTask(id, value));
     }, [id]);
@@ -54,14 +45,6 @@ export const Todolist: React.FC<PropsType> = React.memo(({
     const removeTodoList = useCallback(() => {
         dispatch(removeTodo(id));
     }, [id]);
-
-    // let allTasks = tasks;
-    // if (filter === 'Completed') {
-    //     allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);
-    // }
-    // if (filter === 'Active') {
-    //     allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
-    // }
 
     return (
         <>
@@ -91,20 +74,6 @@ export const Todolist: React.FC<PropsType> = React.memo(({
                     todoListId={id}
                     filter={filter}
                 />
-                {/*{allTasks.map(elem => {*/}
-                {/*    return (*/}
-
-                {/*        <Task*/}
-                {/*            todoListId={id}*/}
-                {/*            taskId={elem.id}*/}
-                {/*            status={elem.status}*/}
-                {/*            taskTitle={elem.title}*/}
-                {/*            key={elem.id}*/}
-                {/*            entityStatus={elem.entityStatus}*/}
-                {/*        />*/}
-
-                {/*    );*/}
-                {/*})}*/}
             </List>
             <div>
 
@@ -134,51 +103,5 @@ export const Todolist: React.FC<PropsType> = React.memo(({
     );
 });
 
-
-type TasksListPropsType = {
-    todoListId: string
-    filter: FilterValueType
-}
-
-export const TasksList: React.FC<TasksListPropsType> = React.memo (({todoListId, filter}) => {
-    const dispatch = useAppDispatch();
-
-    let allTasks = useAppSelector(state => {
-        return state.tasksInitState.tasks.filter(t => t.todoListId === todoListId);
-    });
-
-    useEffect(() => {
-    if (allTasks.length !== 0) {
-        return ;
-    }
-        dispatch(getTasks(todoListId));
-    }, [todoListId]);
-
-    if (filter === 'Completed') {
-        allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);
-    }
-    if (filter === 'Active') {
-        allTasks = allTasks.filter(el => el.status === TasksStatuses.New);
-    }
-
-    return (
-        <>
-            {allTasks.map(elem => {
-                return (
-
-                    <Task
-                        todoListId={todoListId}
-                        taskId={elem.id}
-                        status={elem.status}
-                        taskTitle={elem.title}
-                        key={elem.id}
-                        entityStatus={elem.entityStatus}
-                    />
-
-                );
-            })}
-        </>
-    );
-} );
 
 

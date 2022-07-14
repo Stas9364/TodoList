@@ -2,7 +2,7 @@ import {addTodoList, getTodoLists} from '../../bll/reducers/todoListsReducer';
 import React, {useCallback, useEffect} from 'react';
 import {Grid, Paper} from '@mui/material';
 import AddItemForm from '../common/AddItemForm';
-import {Todolist} from '../TodoList/Todolist';
+import {Todolist} from './Todolist';
 import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
 import {Navigate} from 'react-router-dom';
 

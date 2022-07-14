@@ -26,15 +26,12 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
     const dispatch = useAppDispatch();
 
     const onInputCheckboxChange = useCallback(() => {
-
         let statusVal: number;
-
         if (status === TasksStatuses.New) {
             statusVal = TasksStatuses.Completed;
         }else {
             statusVal = TasksStatuses.New;
         }
-
         dispatch(updateTaskState(todoListId, taskId, {status: statusVal}));
     }, [status, todoListId, taskId]);
 
