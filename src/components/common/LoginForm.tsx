@@ -54,8 +54,11 @@ export const LoginForm = React.memo(() => {
             <form onSubmit={formik.handleSubmit}>
 
                 <FormControl style={{width: '300px'}}>
-                    <FormLabel> some text some text some text some text
-                        some text some text some text some text </FormLabel>
+                    <FormLabel>
+                        To log in use: <br/>
+                        Email: free@samuraijs.com <br/>
+                        Password: free
+                    </FormLabel>
                     <FormGroup>
 
                         <TextField
