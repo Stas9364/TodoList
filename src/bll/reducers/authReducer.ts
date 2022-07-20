@@ -37,7 +37,7 @@ export const getAuthData = (): AppThunk => (dispatch) => {
             if (data.resultCode === 0) {
                 dispatch(authorization(data.data.id, data.data.email, data.data.login, true));
             } else if (data.resultCode === 1) {
-                handleServerError(data, dispatch);
+                // handleServerError(data, dispatch);
             }
             dispatch(mainLoadingAC('succeeded'));
         })
