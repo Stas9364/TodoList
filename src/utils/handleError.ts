@@ -1,17 +1,17 @@
-import {ResponseType} from "../api/tasksAPI";
-import {AppDispatch} from "../bll/storeTodoList";
-import {changeErrorAC, secondaryLoadingAC} from "../bll/actions/appActions";
+import {ResponseType} from '../api/tasksAPI';
+import {changeError, secondaryLoading} from '../bll/reducers/appReducer';
+import {AppDispatch} from '../bll/storeTodoList';
 
 export const handleServerError = <D>(data: ResponseType<D>, dispatch: AppDispatch) => {
     if (data.messages.length) {
-        dispatch(changeErrorAC(data.messages[0]));
+        dispatch(changeError({error:data.messages[0]}));
     } else {
-        dispatch(changeErrorAC('Some error has occurred'));
+        dispatch(changeError({error: 'Some error has occurred'}));
     }
-    dispatch(secondaryLoadingAC('failed'));
+    dispatch(secondaryLoading({secondaryLoading:'failed'}));
 };
 
 export const handleNetworkError = (e: { message: string | null }, dispatch: AppDispatch) => {
-    dispatch(changeErrorAC(e.message ? e.message : 'Something went wrong'));
-    dispatch(secondaryLoadingAC('failed'));
+    dispatch(changeError(e.message ? {error:e.message} : {error:'Something went wrong'}));
+    dispatch(secondaryLoading({secondaryLoading:'failed'}));
 };

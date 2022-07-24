@@ -18,7 +18,7 @@ export const TodoListsList = React.memo (() => {
         dispatch(getTodoLists());
     }, []);
 
-    const todoLists = useAppSelector(state => state.todoListsInitState.todoLists);
+    const todoLists = useAppSelector(state => state.todoLists.todoLists);
 
     const addNewTodoList = useCallback ((newTodoListTitle: string) => {
         dispatch(addTodoList(newTodoListTitle));

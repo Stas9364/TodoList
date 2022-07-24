@@ -5,8 +5,8 @@ import {EditableSpan} from '../common/EditableSpan';
 import {updateTaskState, removeTask} from '../../bll/reducers/tasksReducer';
 import {TasksStatuses} from '../../api/tasksAPI';
 import style from '../TodoList/Todolist.module.css'
-import {useAppDispatch} from "../../App/app/hooks";
-import {RequestStatusType} from "../../bll/reducers/appReducer";
+import {useAppDispatch} from '../../App/app/hooks';
+import {RequestStatusType} from '../../bll/reducers/appReducer';
 
 type TaskPropsType = {
     todoListId: string

@@ -1,8 +1,7 @@
-import {authReducer, initState} from "../bll/reducers/authReducer";
-import {authorization} from "../bll/actions/authActions";
+import {authorization, authReducer, initState} from "../bll/reducers/authReducer";
 
 test('get authorized data', ()=>{
-    const endState = authReducer(initState, authorization(99, 'test@test.com', 'loginTest', true));
+    const endState = authReducer(initState, authorization({id: 99, email: 'test@test.com', login: 'loginTest', isAuth: true}));
 
     expect(endState.id).toBe(99);
     expect(endState.email).toBe('test@test.com');

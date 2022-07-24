@@ -8,7 +8,7 @@ import {useAppDispatch, useAppSelector} from './app/hooks';
 import {LoginForm} from '../components/common/LoginForm';
 import {getAuthData, logout} from '../bll/reducers/authReducer';
 import {Navigate, Route, Routes} from 'react-router-dom';
-import {Preloader} from "../components/common/Preloader/Preloader";
+import {Preloader} from '../components/common/Preloader/Preloader';
 
 
 function App() {
