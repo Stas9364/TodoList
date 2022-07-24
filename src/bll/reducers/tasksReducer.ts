@@ -1,14 +1,9 @@
-import {
-    ACTIONS_TASKS_TYPE,
-    addNewTaskAC,
-    updateTaskStateAC,
-    getTasksAC, removeTaskAC, TaskActionType
-} from '../actions/tasksActions';
 import {TaskPriorities, tasksAPI, TasksStatuses, TaskType, UpdateTaskModelType} from '../../api/tasksAPI';
-import {AppStateType, AppThunk} from '../storeTodoList';
-import {changeErrorAC, secondaryLoadingAC} from '../actions/appActions';
-import {RequestStatusType} from "./appReducer";
-import {handleNetworkError, handleServerError} from "../../utils/handleError";
+import {AppDispatch, RootState} from '../storeTodoList';
+import {changeError, RequestStatusType, secondaryLoading} from './appReducer';
+import {handleNetworkError, handleServerError} from '../../utils/handleError';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {clearTodoListsDataAC} from './todoListsReducer';
 
 export type InitialTasksStateType = {
     tasks: Array<TaskDomainType>
@@ -30,67 +25,72 @@ export const initialState: InitialTasksStateType = {
     tasks: []
 };
 
-export const tasksReducer = (state: InitialTasksStateType = initialState, action: TaskActionType): InitialTasksStateType => {
-    switch (action.type) {
-        case ACTIONS_TASKS_TYPE.GET_TASKS:
-            return {
-                ...state,
-                tasks: [...action.tasks, ...state.tasks]
-            };
-        case ACTIONS_TASKS_TYPE.ADD_NEW_TASK:
-            return {
-                ...state,
-                tasks: [{...action.task, entityStatus: "idle"}, ...state.tasks]
-            };
-        case ACTIONS_TASKS_TYPE.UPDATE_TASK:
-            return {
-                ...state,
-                tasks: state.tasks.map(task => task.id === action.idTask
-                    ? {...task, ...action.model}
-                    : task
-                )
-            };
-        case ACTIONS_TASKS_TYPE.REMOVE_TASK:
-            return {
-                ...state,
-                tasks: state.tasks.filter(task => task.id !== action.idTask)
-            };
-        default:
-            return state;
+
+const slice = createSlice({
+    name: 'tasks',
+    initialState: initialState,
+    reducers: {
+        addNewTaskAC(state, action: PayloadAction<{ task: TaskType }>) {
+            state.tasks.unshift({...action.payload.task});
+        },
+        updateTaskStateAC(state, action: PayloadAction<{ idTask: string, model: UpdateDomainTaskModelType }>) {
+            const index = state.tasks.findIndex(task => task.id === action.payload.idTask);
+            if (index !== -1) {
+                state.tasks[index] = {...state.tasks[index], ...action.payload.model};
+            }
+        },
+        removeTaskAC(state, action: PayloadAction<{ idTask: string }>) {
+            const index = state.tasks.findIndex(task => task.id === action.payload.idTask);
+            if (index !== -1) {
+                state.tasks.splice(index, 1);
+            }
+        },
+        getTasksAC(state, action: PayloadAction<{ tasks: Array<TaskType> }>) {
+            state.tasks.push(...action.payload.tasks);
+        },
+    },
+    extraReducers(builder) {
+        builder.addCase(clearTodoListsDataAC, state => {
+            state.tasks.length = 0;
+        })
     }
-};
+});
+
+export const tasksReducer = slice.reducer;
+export const {addNewTaskAC, updateTaskStateAC, removeTaskAC, getTasksAC} = slice.actions;
 
 /////////Thunk
 
-export const getTasks = (id: string): AppThunk => (dispatch) => {
-    dispatch(secondaryLoadingAC('loading'));
+export const getTasks = (id: string) => (dispatch: AppDispatch) => {
+    dispatch(secondaryLoading({secondaryLoading: 'loading'}));
+
     tasksAPI.getTasks(id)
         .then(resp => {
             if (!resp.data.error) {
-                dispatch(getTasksAC(resp.data.items));
-                dispatch(secondaryLoadingAC('succeeded'));
+                dispatch(getTasksAC({tasks: resp.data.items}));
+                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
             } else {
                 if (resp.data.error) {
-                    dispatch(changeErrorAC(resp.data.error));
-                    dispatch(secondaryLoadingAC('failed'));
+                    dispatch(changeError({error: resp.data.error}));
+                    dispatch(secondaryLoading({secondaryLoading: 'failed'}));
                 } else {
-                    dispatch(changeErrorAC('Some error has occurred'));
+                    dispatch(changeError({error: 'Some error has occurred'}));
                 }
             }
         })
         .catch(e => {
             handleNetworkError(e, dispatch);
         });
-
 };
 
-export const createTask = (id: string, value: string): AppThunk => (dispatch) => {
-    dispatch(secondaryLoadingAC('loading'));
+export const createTask = (id: string, value: string) => (dispatch: AppDispatch) => {
+    dispatch(secondaryLoading({secondaryLoading: 'loading'}));
+
     tasksAPI.createTask(id, value)
         .then(resp => {
             if (resp.data.resultCode === 0) {
-                dispatch(addNewTaskAC(resp.data.data.item));
-                dispatch(secondaryLoadingAC('succeeded'));
+                dispatch(addNewTaskAC({task: resp.data.data.item}));
+                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
             } else {
                 handleServerError(resp.data, dispatch);
             }
@@ -98,15 +98,14 @@ export const createTask = (id: string, value: string): AppThunk => (dispatch) =>
         .catch(e => {
             handleNetworkError(e, dispatch);
         });
-
 };
 
-export const updateTaskState = (todoListId: string, taskId: string, domainModel: UpdateDomainTaskModelType): AppThunk => {
-    return (dispatch, getState: () => AppStateType) => {
-        dispatch(secondaryLoadingAC('loading'));
+export const updateTaskState = (todoListId: string, idTask: string, domainModel: UpdateDomainTaskModelType) => {
+    return (dispatch: AppDispatch, getState: () => RootState) => {
+        dispatch(secondaryLoading({secondaryLoading: 'loading'}));
 
         const state = getState();
-        const task = state.tasksInitState.tasks.find(t => t.id === taskId);
+        const task = state.tasks.tasks.find(t => t.id === idTask);
 
         if (!task) {
             console.warn('Task not found in the state');
@@ -124,29 +123,30 @@ export const updateTaskState = (todoListId: string, taskId: string, domainModel:
             ...domainModel
         };
 
-        tasksAPI.updateTask(todoListId, taskId, model)
+        tasksAPI.updateTask(todoListId, idTask, model)
             .then(resp => {
                 if (resp.data.resultCode === 0) {
-                    dispatch(updateTaskStateAC(todoListId, taskId, domainModel));
-                    dispatch(secondaryLoadingAC('succeeded'));
+                    dispatch(updateTaskStateAC({idTask, model: domainModel}));
+                    dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
                 } else {
                     handleServerError(resp.data, dispatch);
                 }
             })
             .catch(e => {
-                handleNetworkError(e, dispatch)
+                handleNetworkError(e, dispatch);
             });
     };
 };
 
-export const removeTask = (todoListId: string, taskId: string): AppThunk => (dispatch) => {
-    dispatch(secondaryLoadingAC('loading'));
-    dispatch(updateTaskStateAC(todoListId, taskId, {entityStatus: 'loading'}))
-    tasksAPI.deleteTask(todoListId, taskId)
+export const removeTask = (todoListId: string, idTask: string) => (dispatch: AppDispatch) => {
+    dispatch(secondaryLoading({secondaryLoading: 'loading'}));
+    dispatch(updateTaskStateAC({idTask, model: {entityStatus: 'loading'}}));
+
+    tasksAPI.deleteTask(todoListId, idTask)
         .then(resp => {
             if (resp.data.resultCode === 0) {
-                dispatch(removeTaskAC(todoListId, taskId));
-                dispatch(secondaryLoadingAC('succeeded'));
+                dispatch(removeTaskAC({idTask}));
+                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
             } else {
                 handleServerError(resp.data, dispatch);
             }

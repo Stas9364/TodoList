@@ -1,6 +1,11 @@
 import {v1} from 'uuid';
-import {addNewTaskAC, updateTaskStateAC, removeTaskAC} from '../bll/actions/tasksActions';
-import {InitialTasksStateType, tasksReducer} from "../bll/reducers/tasksReducer";
+import {
+    addNewTaskAC,
+    InitialTasksStateType,
+    removeTaskAC,
+    tasksReducer,
+    updateTaskStateAC
+} from "../bll/reducers/tasksReducer";
 import {idTodoList1} from "./todoListsReduser.test";
 import {TaskType} from "../api/tasksAPI";
 
@@ -53,7 +58,7 @@ test('add new task', ()=>{
         todoListId: idTodoList1,
         entityStatus: 'idle'
     };
-    const endState = tasksReducer(startState, addNewTaskAC(task));
+    const endState = tasksReducer(startState, addNewTaskAC({task}));
 
     expect(endState.tasks.length).toBe(3);
     expect(endState.tasks[0].title).toBe('I am the best');
@@ -62,44 +67,44 @@ test('add new task', ()=>{
 });
 
 test('change checkbox status', ()=>{
-    const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id1, {
+    const endState = tasksReducer(startState, updateTaskStateAC({idTask: id1, model: {
         description: '',
         priority: 1,
         startDate: '',
         status: 0,
         title: 'I am the best',
-    }));
+    }}));
 
     expect(endState.tasks.length).toBe(2);
     expect(endState.tasks[0].status).toBe(0);
 });
 
 test('change task title', ()=>{
-   const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id1,{
+   const endState = tasksReducer(startState, updateTaskStateAC({idTask: id1, model: {
        description: '',
        priority: 1,
        startDate: '',
        status: 0,
        title: 'i am a new title',
-   }));
+   }}));
 
     expect(endState.tasks[0].title).toBe('i am a new title');
 });
 
 test('change task entity status', ()=>{
-   const endState = tasksReducer(startState, updateTaskStateAC(idTodoList1, id2,{
+   const endState = tasksReducer(startState, updateTaskStateAC({idTask: id2, model: {
        description: '',
        priority: 1,
        startDate: '',
        status: 0,
        entityStatus: 'loading'
-   }));
+   }}));
 
     expect(endState.tasks[1].entityStatus).toBe('loading');
 });
 
 test('remove task', ()=>{
-    const endState = tasksReducer(startState, removeTaskAC(idTodoList1, id2));
+    const endState = tasksReducer(startState, removeTaskAC({idTask: id2}));
 
     expect(endState.tasks.length).toBe(1);
     expect(endState.tasks[0].title).toBe('some task title');

@@ -2,9 +2,14 @@ import React from 'react';
 import {useFormik} from 'formik';
 import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
 import {login} from '../../bll/reducers/authReducer';
-import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, TextField} from '@mui/material';
+import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from '@mui/material';
 import {Navigate} from "react-router-dom";
 
+type FormikErrorsType = {
+    email?: string
+    password?: string
+    rememberMe?: boolean
+}
 
 export const LoginForm = React.memo(() => {
     const dispatch = useAppDispatch();
@@ -12,19 +17,18 @@ export const LoginForm = React.memo(() => {
 
     const formik = useFormik({
         validate: (values) => {
+            const errors: FormikErrorsType = {};
             if (!values.email) {
-                return {
-                    email: 'Required'
-                }
-            } else if (!/^[A-Z\d._%+-]+@[A-Z\d.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-                return {
-                    email: 'Invalid email address'
-                }
-            } else if (!values.password) {
-                return {
-                    password: 'Required'
-                }
+                errors.email = 'Required';
+            }else if (!/^[A-Z\d._%+-]+@[A-Z\d.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+                errors.email = 'Invalid email address';
             }
+            if (!values.password) {
+                errors.password = 'Required';
+            }else if (values.password.length <= 2) {
+                errors.password = 'Password should be more then 2 symbols';
+            }
+            return errors;
         },
         initialValues: {
             email: '',
@@ -37,7 +41,7 @@ export const LoginForm = React.memo(() => {
     });
 
     if (isAuth) {
-        return <Navigate to={'/'} />
+        return <Navigate to={'/'}/>
     }
 
     return (
@@ -49,17 +53,23 @@ export const LoginForm = React.memo(() => {
         >
             <form onSubmit={formik.handleSubmit}>
 
-                <FormControl>
+                <FormControl style={{width: '300px'}}>
+                    <FormLabel>
+                        To log in use: <br/>
+                        Email: free@samuraijs.com <br/>
+                        Password: free
+                    </FormLabel>
                     <FormGroup>
 
                         <TextField
                             label='Email'
                             variant='standard'
                             margin='normal'
-                            helperText={formik.errors.email}
-                            error={!!formik.errors.email}
                             {...formik.getFieldProps('email')}
                         />
+                        {formik.touched.email && formik.errors.email
+                            && <div style={{color: 'red'}}>{formik.errors.email}</div>
+                        }
 
                         <TextField
                             label='Password'
@@ -67,10 +77,12 @@ export const LoginForm = React.memo(() => {
                             type='password'
                             autoComplete='password'
                             margin='normal'
-                            helperText={formik.errors.password}
-                            error={!!formik.errors.password}
                             {...formik.getFieldProps('password')}
                         />
+                        {formik.touched.password && formik.errors.password
+                            && <div style={{color: 'red'}}>{formik.errors.password}</div>
+                        }
+
 
                         <FormControlLabel
                             label='Remember me'

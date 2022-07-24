@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {FilterValueType} from '../components/TodoList/Todolist';
-import {RequestStatusType} from "../bll/reducers/appReducer";
+import {RequestStatusType} from '../bll/reducers/appReducer';
 
 export type TodoListType = {
     id: string

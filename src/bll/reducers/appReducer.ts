@@ -1,11 +1,11 @@
-import {ACTIONS_APP_TYPE, AppActionsTypes} from '../actions/appActions';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
+export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed';
 export type InitStateType = {
     mainLoading: RequestStatusType
     secondaryLoading: RequestStatusType
     error: string | null;
 };
-export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 export const initState: InitStateType = {
     mainLoading: 'idle',
@@ -13,17 +13,21 @@ export const initState: InitStateType = {
     error: null
 }
 
-export const appReducer = (state: InitStateType = initState, action: AppActionsTypes): InitStateType => {
-    switch (action.type) {
-        case ACTIONS_APP_TYPE.MAIN_LOADING:
-            return {...state, mainLoading: action.status};
-        case ACTIONS_APP_TYPE.SECONDARY_LOADING:
-            return {...state, secondaryLoading: action.status};
-        case ACTIONS_APP_TYPE.CHANGE_ERROR:
-            return {...state, error: action.error};
-        default:
-            return state;
+const slice = createSlice({
+    name: 'app',
+    initialState: initState,
+    reducers: {
+        mainLoading(state, action: PayloadAction<{ mainLoading: RequestStatusType }>) {
+            state.mainLoading = action.payload.mainLoading;
+        },
+        secondaryLoading(state, action: PayloadAction<{ secondaryLoading: RequestStatusType }>) {
+            state.secondaryLoading = action.payload.secondaryLoading;
+        },
+        changeError(state, action: PayloadAction<{ error: string | null }>) {
+            state.error = action.payload.error;
+        }
     }
-};
+});
 
-
+export const appReducer = slice.reducer;
+export const {mainLoading, secondaryLoading, changeError} = slice.actions;
