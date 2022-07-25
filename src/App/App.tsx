@@ -9,6 +9,7 @@ import {LoginForm} from '../components/common/LoginForm';
 import {getAuthData, logout} from '../bll/reducers/authReducer';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {Preloader} from '../components/common/Preloader/Preloader';
+import {Error404} from '../components/common/Error404/Error404';
 
 
 function App() {
@@ -28,11 +29,11 @@ function App() {
     }, []);
 
     if (initializedApp === 'loading') {
-        return <Preloader/>
+        return <Preloader/>;
     }
 
     return (
-        <div className="App">
+        <div className='App'>
 
             <AppBar position="static" color={'primary'}>
                 <Toolbar style={{justifyContent: 'space-between'}}>
@@ -63,7 +64,7 @@ function App() {
             </AppBar>
 
             <div style={{height: '10px'}}>
-                {addStatus === 'loading' && <LinearProgress color={"secondary"}/>}
+                {addStatus === 'loading' && <LinearProgress color={'secondary'}/>}
             </div>
 
             <CustomizedSnackbars/>
@@ -74,9 +75,7 @@ function App() {
                     <Route path={'/'} element={<TodoListsList/>}/>
                     <Route path={'/login'} element={<LoginForm/>}/>
 
-                    {/*Create PAGE 404*/}
-
-                    <Route path={'/404'} element={<h1>404. Page not found</h1>}/>
+                    <Route path={'/404'} element={<Error404/>}/>
                     <Route path={'*'} element={<Navigate to={'/404'} />} />
                 </Routes>
 
