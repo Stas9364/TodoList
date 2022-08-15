@@ -1,14 +1,14 @@
 import React from 'react';
-import {useFormik} from 'formik';
+import {FormikHelpers, useFormik} from 'formik';
 import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
 import {login} from '../../bll/reducers/authReducer';
 import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from '@mui/material';
-import {Navigate} from "react-router-dom";
+import {Navigate} from 'react-router-dom';
 
 type FormikErrorsType = {
-    email?: string
-    password?: string
-    rememberMe?: boolean
+    email: string
+    password: string
+    rememberMe: boolean
 }
 
 export const LoginForm = React.memo(() => {
@@ -17,15 +17,15 @@ export const LoginForm = React.memo(() => {
 
     const formik = useFormik({
         validate: (values) => {
-            const errors: FormikErrorsType = {};
+            const errors = {} as FormikErrorsType;
             if (!values.email) {
                 errors.email = 'Required';
-            }else if (!/^[A-Z\d._%+-]+@[A-Z\d.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+            } else if (!/^[A-Z\d._%+-]+@[A-Z\d.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
                 errors.email = 'Invalid email address';
             }
             if (!values.password) {
                 errors.password = 'Required';
-            }else if (values.password.length <= 2) {
+            } else if (values.password.length <= 2) {
                 errors.password = 'Password should be more then 2 symbols';
             }
             return errors;
@@ -35,13 +35,20 @@ export const LoginForm = React.memo(() => {
             password: '',
             rememberMe: false
         },
-        onSubmit: values => {
-            dispatch(login(values.email, values.password, values.rememberMe));
+        onSubmit: async (values: FormikErrorsType, formikHelpers: FormikHelpers<FormikErrorsType>) => {
+            const action = await dispatch(login({
+                email: values.email, password: values.password, rememberMe: values.rememberMe
+            }));
+            if (login.rejected.match(action)) {
+                if (action.payload) {
+                    formikHelpers.setFieldError('email', action.payload.errors[0]);
+                }
+            }
         }
     });
 
     if (isAuth) {
-        return <Navigate to={'/'}/>
+        return <Navigate to={'/'}/>;
     }
 
     return (

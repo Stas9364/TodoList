@@ -9,14 +9,14 @@ export type ResponseType<D = {}> = {
     data: D
     resultCode: number
     messages: Array<string>
-    fieldsErrors: Array<string>
+    fieldsErrors?: Array<string> | undefined
 }
 
 const instance = axios.create({
     withCredentials: true,
     baseURL: 'https://social-network.samuraijs.com/api/1.1/',
     headers: {
-        "API-KEY": "20b2cf04-7cf4-4d25-8e54-5f388ae38747"
+        'API-KEY': '20b2cf04-7cf4-4d25-8e54-5f388ae38747'
     }
 });
 

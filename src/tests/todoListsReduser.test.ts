@@ -1,11 +1,11 @@
 import {
-    addTodoListAC,
-    removeTodoListAC,
+    addTodoList,
+    removeTodo,
     TodoListDomainType,
     todoListsReducer,
     updateTodoListStateAC
-} from "../bll/reducers/todoListsReducer";
-import {v1} from "uuid";
+} from '../bll/reducers/todoListsReducer';
+import {v1} from 'uuid';
 
 export const idTodoList1 = v1();
 export const idTodoList2 = v1();
@@ -32,26 +32,30 @@ export const initialState = {
         }
     ] as Array<TodoListDomainType>,
     isLoading: false
-}
+};
 
 test('remove todoList', () => {
-    const endState =
-        todoListsReducer(initialState, removeTodoListAC({id: idTodoList2}));
+    const endState = todoListsReducer(
+        initialState,
+        removeTodo.fulfilled({id: idTodoList2}, 'requestID', idTodoList2));
 
     expect(endState.todoLists.length).toBe(1);
     expect(endState.todoLists[0].title).toBe('What to buy');
 });
 
 test('add todoList', () => {
-    const endState =
-        todoListsReducer(initialState, addTodoListAC({todoList: {
-            id: idTodoList3,
-            title: 'Changed title',
-            addedDate: 'string',
-            order: 0,
-            filter: 'All',
-            entityStatus: "idle"
-        }}));
+    const endState = todoListsReducer(
+        initialState,
+        addTodoList.fulfilled({
+            todoList: {
+                id: idTodoList3,
+                title: 'Changed title',
+                addedDate: 'string',
+                order: 0,
+                filter: 'All',
+                entityStatus: 'idle'
+            }
+        }, 'requestID', idTodoList3));
 
     expect(endState.todoLists.length).toBe(3);
     expect(endState.todoLists[0].title).toBe('Changed title');
