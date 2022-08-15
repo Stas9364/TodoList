@@ -11,7 +11,7 @@ export const initState: InitStateType = {
     mainLoading: 'idle',
     secondaryLoading: 'idle',
     error: null
-}
+};
 
 const slice = createSlice({
     name: 'app',

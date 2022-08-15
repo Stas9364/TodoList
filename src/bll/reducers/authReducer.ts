@@ -1,10 +1,8 @@
-import {AppDispatch} from '../storeTodoList';
 import {authAPI} from '../../api/authorizationAPI';
 import {handleNetworkError, handleServerError} from '../../utils/handleError';
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {mainLoading, secondaryLoading} from './appReducer';
 import {clearTodoListsDataAC} from './todoListsReducer';
-// import {clearTasksDataAC} from './tasksReducer';
 
 export type InitStateType = {
     id: number | null
@@ -18,84 +16,99 @@ export const initState: InitStateType = {
     login: null,
     email: null,
     isAuth: false
-}
+};
+
+//////THUNKS
+
+export const getAuthData = createAsyncThunk(
+    'auth/getAuthData',
+    async (arg, thunkAPI) => {
+        thunkAPI.dispatch(mainLoading({mainLoading: 'loading'}));
+        try {
+            const resp = await authAPI.authorization();
+            if (resp.data.resultCode === 0) {
+                return {
+                    id: resp.data.data.id,
+                    email: resp.data.data.email,
+                    login: resp.data.data.login,
+                    isAuth: true
+                };
+            } else if (resp.data.resultCode === 1) {
+                //handleServerError(resp.data, thunkAPI.dispatch);
+            }
+        } catch (error) {
+            handleNetworkError(error, thunkAPI.dispatch);
+        } finally {
+            thunkAPI.dispatch(mainLoading({mainLoading: 'succeeded'}));
+        }
+    }
+);
+
+export const login = createAsyncThunk<{}, { email: string, password: string, rememberMe: boolean },
+    {rejectValue: {errors: Array<string>, fieldsErrors?: Array<string> | undefined}}>(
+    'auth/login',
+    async (param: { email: string, password: string, rememberMe: boolean }, thunkAPI) => {
+        thunkAPI.dispatch(secondaryLoading({secondaryLoading: 'loading'}));
+        try {
+            const resp = await authAPI.login(param.email, param.password, param.rememberMe);
+            if (resp.data.resultCode === 0) {
+                thunkAPI.dispatch(getAuthData());
+            } else if (resp.data.resultCode === 1) {
+                // @ts-ignore
+                handleServerError(resp.data, thunkAPI.dispatch);
+                return thunkAPI.rejectWithValue(
+                    {errors: resp.data.messages, fieldsErrors: resp.data.fieldsErrors});
+            }
+        } catch (error: any) {
+            handleNetworkError(error, thunkAPI.dispatch);
+            return thunkAPI.rejectWithValue(
+                {errors: error.message, fieldsErrors: undefined});
+        } finally {
+            thunkAPI.dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
+        }
+    }
+);
+
+export const logout = createAsyncThunk(
+    'auth/logout',
+    async (arg, thunkAPI) => {
+        thunkAPI.dispatch(secondaryLoading({secondaryLoading: 'loading'}));
+        try {
+            const resp = await authAPI.logout();
+            if (resp.data.resultCode === 0) {
+                thunkAPI.dispatch(clearTodoListsDataAC());
+                return {id: null, email: null, login: null, isAuth: false};
+            }
+        } catch (e) {
+            handleNetworkError(e, thunkAPI.dispatch);
+        }finally {
+            thunkAPI.dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
+        }
+    }
+);
 
 const slice = createSlice({
     name: 'auth',
     initialState: initState,
-    reducers: {
-        authorization(state, action: PayloadAction<InitStateType>) {
-            state.id = action.payload.id;
-            state.login = action.payload.login;
-            state.email = action.payload.email;
-            state.isAuth = action.payload.isAuth;
-        },
-    },
+    reducers: {},
+    extraReducers (builder) {
+        builder.addCase(getAuthData.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.id = action.payload.id;
+                state.login = action.payload.login;
+                state.email = action.payload.email;
+                state.isAuth = action.payload.isAuth;
+            }
+        });
+        builder.addCase(logout.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.id = action.payload.id;
+                state.login = action.payload.login;
+                state.email = action.payload.email;
+                state.isAuth = action.payload.isAuth;
+            }
+        });
+    }
 });
 
 export const authReducer = slice.reducer;
-export const {authorization} = slice.actions;
-
-
-//////THUNKS
-
-export const getAuthData = () => (dispatch: AppDispatch) => {
-    dispatch(mainLoading({mainLoading: 'loading'}));
-
-    authAPI.authorization()
-        .then(resp => resp.data)
-        .then(data => {
-            if (data.resultCode === 0) {
-                dispatch(authorization({
-                    id: data.data.id,
-                    email: data.data.email,
-                    login: data.data.login,
-                    isAuth: true
-                }));
-            } else if (data.resultCode === 1) {
-                // handleServerError(data, dispatch);
-            }
-            dispatch(mainLoading({mainLoading: 'succeeded'}));
-        })
-        .catch(e => {
-            handleNetworkError(e, dispatch);
-        });
-};
-
-export const login = (email: string, password: string, rememberMe: boolean) => (dispatch: AppDispatch) => {
-    dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-
-    authAPI.login(email, password, rememberMe)
-        .then(resp => {
-            if (resp.data.resultCode === 0) {
-                dispatch(getAuthData());
-                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-            } else if (resp.data.resultCode === 1) {
-                handleServerError(resp.data, dispatch);
-                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-            } else if (resp.data.resultCode === 10) {
-                console.warn(resp.data.messages[0]);
-                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-            }
-        })
-        .catch(e => {
-            handleNetworkError(e, dispatch);
-        });
-};
-
-export const logout = () => (dispatch: AppDispatch) => {
-    dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-
-    authAPI.logout()
-        .then(resp => {
-            if (resp.data.resultCode === 0) {
-                dispatch(authorization({id: null, email: null, login: null, isAuth: false}));
-                dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-                dispatch(clearTodoListsDataAC());
-                // dispatch(clearTasksDataAC());
-            }
-        })
-        .catch(e => {
-            handleNetworkError(e, dispatch);
-        });
-};

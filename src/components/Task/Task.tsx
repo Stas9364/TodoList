@@ -4,7 +4,7 @@ import {Delete} from '@mui/icons-material';
 import {EditableSpan} from '../common/EditableSpan';
 import {updateTaskState, removeTask} from '../../bll/reducers/tasksReducer';
 import {TasksStatuses} from '../../api/tasksAPI';
-import style from '../TodoList/Todolist.module.css'
+import style from '../TodoList/Todolist.module.css';
 import {useAppDispatch} from '../../App/app/hooks';
 import {RequestStatusType} from '../../bll/reducers/appReducer';
 
@@ -32,15 +32,15 @@ export const Task: React.FC<TaskPropsType> = React.memo(({
         }else {
             statusVal = TasksStatuses.New;
         }
-        dispatch(updateTaskState(todoListId, taskId, {status: statusVal}));
+        dispatch(updateTaskState({todoListId, taskId, domainModel: {status: statusVal}}));
     }, [status, todoListId, taskId]);
 
     const onInputTitleChange = useCallback((title: string) => {
-        dispatch(updateTaskState(todoListId, taskId, {title}));
+        dispatch(updateTaskState({todoListId, taskId, domainModel: {title}}));
     }, [todoListId, taskId]);
 
     const onRemoveTask = useCallback(() => {
-        dispatch(removeTask(todoListId, taskId));
+        dispatch(removeTask({todoListId, taskId}));
     }, [todoListId, taskId]);
 
     return (
