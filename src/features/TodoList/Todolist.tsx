@@ -1,13 +1,12 @@
 import React, {useCallback} from 'react';
-import AddItemForm from '../common/AddItemForm';
-import {EditableSpan} from '../common/EditableSpan';
 import {Button, IconButton, List} from '@mui/material';
 import {Delete} from '@mui/icons-material';
-import {removeTodo, updateTodoListStateAC} from '../../bll/reducers/todoListsReducer';
-import {createTask} from '../../bll/reducers/tasksReducer';
-import {useAppDispatch} from '../../App/app/hooks';
-import {RequestStatusType} from '../../bll/reducers/appReducer';
+import {removeTodo, updateTodoListStateAC} from './todoListsReducer';
+import {RequestStatusType} from '../../App/appReducer';
+import {createTask} from '../Task/tasksReducer';
 import {TasksList} from '../Task/TasksList';
+import {AddItemForm, EditableSpan} from '../../components';
+import {useAppDispatch} from '../../App';
 
 export type FilterValueType =
     | 'Active'

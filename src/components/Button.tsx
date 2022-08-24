@@ -1,5 +1,5 @@
 import React from 'react';
-import {FilterValueType} from '../TodoList/Todolist';
+import {FilterValueType} from '../features/TodoList';
 
 type ButtonProps = {
     onClick: (name: FilterValueType) => void

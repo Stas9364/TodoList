@@ -4,7 +4,7 @@ import {
     TodoListDomainType,
     todoListsReducer,
     updateTodoListStateAC
-} from '../bll/reducers/todoListsReducer';
+} from '../features/TodoList/todoListsReducer';
 import {v1} from 'uuid';
 
 export const idTodoList1 = v1();

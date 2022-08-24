@@ -1,6 +1,6 @@
 import React from 'react';
-import preloader from '../../../assets/img/preloader.gif'
-import styles from './Preloader.module.css'
+import styles from './Preloader.module.css';
+import {preloader} from '../../assets';
 
 export const Preloader = React.memo( () => {
     return (

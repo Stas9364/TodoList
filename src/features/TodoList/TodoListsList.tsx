@@ -1,15 +1,18 @@
-import {addTodoList, getTodoLists} from '../../bll/reducers/todoListsReducer';
+import {addTodoList, getTodoLists} from './todoListsReducer';
 import React, {useCallback, useEffect} from 'react';
 import {Grid, Paper} from '@mui/material';
-import AddItemForm from '../common/AddItemForm';
 import {Todolist} from './Todolist';
-import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
 import {Navigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../App';
+import {AddItemForm} from '../../components';
+import {authSelectors} from '../Auth';
+import {todoListsSelector} from './selectors';
 
 export const TodoListsList = React.memo (() => {
 
     const dispatch = useAppDispatch();
-    const isAuth = useAppSelector(state => state.auth.isAuth);
+    const isAuth = useAppSelector(authSelectors.isAuthSelector);
+    const todoLists = useAppSelector(todoListsSelector);
 
     useEffect(() => {
         if (!isAuth) {
@@ -18,14 +21,12 @@ export const TodoListsList = React.memo (() => {
         dispatch(getTodoLists());
     }, []);
 
-    const todoLists = useAppSelector(state => state.todoLists.todoLists);
-
     const addNewTodoList = useCallback ((newTodoListTitle: string) => {
         dispatch(addTodoList(newTodoListTitle));
     }, []);
 
     if (!isAuth) {
-        return <Navigate to={'/login'} />
+        return <Navigate to={'/login'} />;
     }
 
     return (

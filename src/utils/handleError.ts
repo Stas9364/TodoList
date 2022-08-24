@@ -1,5 +1,5 @@
 import {ResponseType} from '../api/tasksAPI';
-import {changeError, secondaryLoading} from '../bll/reducers/appReducer';
+import {changeError, secondaryLoading} from '../App/appReducer';
 import {Dispatch} from 'redux';
 
 export const handleServerError = <D>(data: ResponseType<D>, dispatch: Dispatch) => {

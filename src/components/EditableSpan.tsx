@@ -7,11 +7,11 @@ type EditableSpanType = {
     disabled?: boolean | undefined
 }
 
-export const EditableSpan: React.FC<EditableSpanType> = React.memo ( ({title, changeTitleHandler, disabled=false}) => {
+export const EditableSpan: React.FC<EditableSpanType> = React.memo(({title, changeTitleHandler, disabled = false}) => {
     const [editMode, setEditMode] = useState(false);
     const [titleValue, setTitleValue] = useState<string>(title);
 
-    const activateEditMode = useCallback (() => {
+    const activateEditMode = useCallback(() => {
         setEditMode(true);
         setTitleValue(title);
     }, [title]);
@@ -30,7 +30,7 @@ export const EditableSpan: React.FC<EditableSpanType> = React.memo ( ({title, ch
         }
     };
 
-        return(
+    return (
         editMode
             ? <TextField
                 disabled={disabled}
@@ -42,7 +42,8 @@ export const EditableSpan: React.FC<EditableSpanType> = React.memo ( ({title, ch
                 autoFocus
             />
             : <span
+                title={'Double click to change title'}
                 onDoubleClick={activateEditMode}
             >{title}</span>
     );
-} );
+});

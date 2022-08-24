@@ -1,6 +1,6 @@
-import {authReducer, getAuthData, initState} from '../bll/reducers/authReducer';
+import {authReducer, getAuthData, initState} from '../features/Auth/authReducer';
 
-//  import {authorization, authReducer, initState} from "../bll/reducers/authReducer";
+//  import {authorization, authReducer, initState} from "../reduxStore/reducers/authReducer";
 //
 // test('get authorized data', ()=>{
 //     const endState = authReducer(initState, authorization({id: 99, email: 'test@test.com', login: 'loginTest', isAuth: true}));

@@ -1,9 +1,10 @@
 import React from 'react';
 import {FormikHelpers, useFormik} from 'formik';
-import {useAppDispatch, useAppSelector} from '../../App/app/hooks';
-import {login} from '../../bll/reducers/authReducer';
+import {useAppDispatch, useAppSelector} from '../../App';
+import {login} from './authReducer';
 import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from '@mui/material';
 import {Navigate} from 'react-router-dom';
+import {isAuthSelector} from './selectors';
 
 type FormikErrorsType = {
     email: string
@@ -11,9 +12,9 @@ type FormikErrorsType = {
     rememberMe: boolean
 }
 
-export const LoginForm = React.memo(() => {
+export const Auth = React.memo(() => {
     const dispatch = useAppDispatch();
-    const isAuth = useAppSelector(state => state.auth.isAuth);
+    const isAuth = useAppSelector(isAuthSelector);
 
     const formik = useFormik({
         validate: (values) => {
