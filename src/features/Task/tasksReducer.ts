@@ -1,9 +1,9 @@
 import {TaskPriorities, tasksAPI, TasksStatuses, TaskType, UpdateTaskModelType} from '../../api/tasksAPI';
-import {RootState} from '../storeTodoList';
-import {changeError, RequestStatusType, secondaryLoading} from './appReducer';
+import {RootState} from '../../reduxStore/storeTodoList';
+import {changeError, RequestStatusType, secondaryLoading} from '../../App/appReducer';
 import {handleNetworkError, handleServerError} from '../../utils/handleError';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {clearTodoListsDataAC} from './todoListsReducer';
+import {clearTodoListsDataAC} from '../TodoList/todoListsReducer';
 
 export type InitialTasksStateType = {
     tasks: Array<TaskDomainType>
@@ -161,101 +161,3 @@ const slice = createSlice({
 });
 
 export const tasksReducer = slice.reducer;
-/////////Thunk
-
-// export const getTasks_ = (id: string) => (dispatch: AppDispatch) => {
-//     dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-//
-//     tasksAPI.getTasks(id)
-//         .then(resp => {
-//             if (!resp.data.error) {
-//                 dispatch(getTasksAC({tasks: resp.data.items}));
-//                 dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-//             } else {
-//                 if (resp.data.error) {
-//                     dispatch(changeError({error: resp.data.error}));
-//                     dispatch(secondaryLoading({secondaryLoading: 'failed'}));
-//                 } else {
-//                     dispatch(changeError({error: 'Some error has occurred'}));
-//                 }
-//             }
-//         })
-//         .catch(e => {
-//             handleNetworkError(e, dispatch);
-//         });
-// };
-
-// export const createTask_ = (id: string, value: string) => (dispatch: AppDispatch) => {
-//     dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-//
-//     tasksAPI.createTask(id, value)
-//         .then(resp => {
-//             if (resp.data.resultCode === 0) {
-//                 dispatch(addNewTaskAC({task: resp.data.data.item}));
-//                 dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-//             } else {
-//                 handleServerError(resp.data, dispatch);
-//             }
-//         })
-//         .catch(e => {
-//             handleNetworkError(e, dispatch);
-//         });
-// };
-
-// export const updateTaskState_ = (todoListId: string, idTask: string, domainModel: UpdateDomainTaskModelType) => {
-//     return (dispatch: AppDispatch, getState: () => RootState) => {
-//         dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-//
-//         const state = getState();
-//         const task = state.tasks.tasks.find(t => t.id === idTask);
-//
-//         if (!task) {
-//             console.warn('Task not found in the state');
-//             return;
-//         }
-//
-//         const model: UpdateTaskModelType = {
-//             title: task.title,
-//             status: task.status,
-//             deadline: task.deadline,
-//             description: task.description,
-//             priority: task.priority,
-//             startDate: task.startDate,
-//             entityStatus: 'idle',
-//             ...domainModel
-//         };
-//
-//         tasksAPI.updateTask(todoListId, idTask, model)
-//             .then(resp => {
-//                 if (resp.data.resultCode === 0) {
-//                     dispatch(updateTaskStateAC({idTask, model: domainModel}));
-//                     dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-//                 } else {
-//                     handleServerError(resp.data, dispatch);
-//                 }
-//             })
-//             .catch(e => {
-//                 handleNetworkError(e, dispatch);
-//             });
-//     };
-// };
-
-// export const removeTask_ = (todoListId: string, idTask: string) => (dispatch: AppDispatch) => {
-//     dispatch(secondaryLoading({secondaryLoading: 'loading'}));
-//     dispatch(updateTaskStateAC({idTask, model: {entityStatus: 'loading'}}));
-//
-//     tasksAPI.deleteTask(todoListId, idTask)
-//         .then(resp => {
-//             if (resp.data.resultCode === 0) {
-//                 dispatch(removeTaskAC({idTask}));
-//                 dispatch(secondaryLoading({secondaryLoading: 'succeeded'}));
-//             } else {
-//                 handleServerError(resp.data, dispatch);
-//             }
-//         })
-//         .catch(e => {
-//             handleNetworkError(e, dispatch);
-//         });
-// };
-
-

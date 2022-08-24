@@ -1,9 +1,9 @@
 import {todoListsAPI, TodoListType} from '../../api/todoListsAPI';
-import {FilterValueType} from '../../components/TodoList/Todolist';
-import {RequestStatusType, secondaryLoading} from './appReducer';
+import {FilterValueType} from './Todolist';
+import {RequestStatusType, secondaryLoading} from '../../App/appReducer';
 import {handleNetworkError, handleServerError} from '../../utils/handleError';
-import {getTasks} from './tasksReducer';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {getTasks} from '../Task/tasksReducer';
 
 export type InitialStateType = {
     todoLists: Array<TodoListDomainType>

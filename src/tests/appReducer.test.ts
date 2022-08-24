@@ -1,4 +1,4 @@
-import {appReducer, changeError, initState, mainLoading, secondaryLoading} from "../bll/reducers/appReducer";
+import {appReducer, changeError, initState, mainLoading, secondaryLoading} from '../App/appReducer';
 
 test('change todoLists status', ()=>{
     const endState = appReducer(initState, mainLoading({mainLoading:'succeeded'}));

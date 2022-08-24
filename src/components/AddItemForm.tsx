@@ -1,13 +1,13 @@
 import React, {ChangeEvent, KeyboardEvent, useCallback, useState} from 'react';
 import {IconButton, TextField} from '@mui/material';
-import {AddBox} from "@mui/icons-material";
+import {AddBox} from '@mui/icons-material';
 
 type AddItemFormPropsType = {
     addTodoListsElements: (value: string) => void
     disabled?: boolean | undefined
 }
 
-const AddItemForm: React.FC<AddItemFormPropsType> = React.memo(({addTodoListsElements, disabled = false}) => {
+export const AddItemForm: React.FC<AddItemFormPropsType> = React.memo(({addTodoListsElements, disabled = false}) => {
     const [value, setValue] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +20,7 @@ const AddItemForm: React.FC<AddItemFormPropsType> = React.memo(({addTodoListsEle
         } else {
             setError('Title is required');
         }
-    }, [value]);
+    }, [addTodoListsElements, value]);
 
     const onKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (error !== null) {
@@ -58,4 +58,3 @@ const AddItemForm: React.FC<AddItemFormPropsType> = React.memo(({addTodoListsEle
     );
 });
 
-export default AddItemForm;

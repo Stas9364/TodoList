@@ -5,7 +5,7 @@ import {
     removeTask,
     tasksReducer,
     updateTaskState,
-} from '../bll/reducers/tasksReducer';
+} from '../features/Task/tasksReducer';
 import {idTodoList1} from './todoListsReduser.test';
 import {TaskType} from '../api/tasksAPI';
 

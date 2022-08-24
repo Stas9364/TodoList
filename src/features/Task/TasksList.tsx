@@ -1,8 +1,9 @@
 import React from 'react';
-import { useAppSelector} from '../../App/app/hooks';
 import {TasksStatuses} from '../../api/tasksAPI';
 import {Task} from './Task';
-import {FilterValueType} from '../TodoList/Todolist';
+import {useAppSelector} from '../../App';
+import {FilterValueType} from '../TodoList';
+import {getTodoListTasks} from './selectors';
 
 type TasksListPropsType = {
     todoListId: string
@@ -11,9 +12,7 @@ type TasksListPropsType = {
 
 export const TasksList: React.FC<TasksListPropsType> = React.memo (({todoListId, filter}) => {
 
-    let allTasks = useAppSelector(state => {
-        return state.tasks.tasks.filter(t => t.todoListId === todoListId);
-    });
+    let allTasks = useAppSelector(state => getTodoListTasks(state, todoListId));
 
     if (filter === 'Completed') {
         allTasks = allTasks.filter(el => el.status === TasksStatuses.Completed);

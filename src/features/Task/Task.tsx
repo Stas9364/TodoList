@@ -1,12 +1,12 @@
 import React, {useCallback} from 'react';
 import {Checkbox, IconButton, ListItem} from '@mui/material';
 import {Delete} from '@mui/icons-material';
-import {EditableSpan} from '../common/EditableSpan';
-import {updateTaskState, removeTask} from '../../bll/reducers/tasksReducer';
+import {updateTaskState, removeTask} from './tasksReducer';
 import {TasksStatuses} from '../../api/tasksAPI';
-import style from '../TodoList/Todolist.module.css';
-import {useAppDispatch} from '../../App/app/hooks';
-import {RequestStatusType} from '../../bll/reducers/appReducer';
+import {RequestStatusType} from '../../App/appReducer';
+import {EditableSpan} from '../../components';
+import {useAppDispatch} from '../../App';
+import {style} from '../TodoList';
 
 type TaskPropsType = {
     todoListId: string

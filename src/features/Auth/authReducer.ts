@@ -1,8 +1,8 @@
 import {authAPI} from '../../api/authorizationAPI';
 import {handleNetworkError, handleServerError} from '../../utils/handleError';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {mainLoading, secondaryLoading} from './appReducer';
-import {clearTodoListsDataAC} from './todoListsReducer';
+import {mainLoading, secondaryLoading} from '../../App/appReducer';
+import {clearTodoListsDataAC} from '../TodoList/todoListsReducer';
 
 export type InitStateType = {
     id: number | null
