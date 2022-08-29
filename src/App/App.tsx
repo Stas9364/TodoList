@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {AppBar, Button, Container, IconButton, LinearProgress, Toolbar, Typography} from '@mui/material';
-import {Menu} from '@mui/icons-material';
 import {TodoListsList} from '../features/TodoList/TodoListsList';
 import {Auth} from '../features/Auth';
 import {getAuthData, logout} from '../features/Auth/authReducer';
@@ -44,7 +43,6 @@ function App() {
                         aria-label="menu"
                         sx={{mr: 2}}
                     >
-                        <Menu/>
                     </IconButton>
                     <Typography variant="h6" component="div">
                         TODO LIST
